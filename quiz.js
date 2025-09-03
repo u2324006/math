@@ -68,8 +68,15 @@ function coefToTex(coef, variable=false) {
 }
 
 function equationToTex({a,b,c,d}) {
-  const left = `${coefToTex(a, true)} ${b[0] >= 0 ? '+ ' : ''}${coefToTex(b, false)}`;
-  const right = `${coefToTex(c, true)} ${d[0] >= 0 ? '+ ' : ''}${coefToTex(d, false)}`;
+  let left = coefToTex(a, true);
+  if (b[0] !== 0) {
+    left += ` ${b[0] >= 0 ? '+ ' : ''}${coefToTex(b, false)}`;
+  }
+
+  let right = coefToTex(c, true);
+  if (d[0] !== 0) {
+    right += ` ${d[0] >= 0 ? '+ ' : ''}${coefToTex(d, false)}`;
+  }
   return `${left} = ${right}`;
 }
 
