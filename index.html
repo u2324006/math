@@ -3,17 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>一次方程式ジェネレーター (KaTeX)</title>
+  <title>一次方程式ジェネレーター</title>
   <link rel="stylesheet" href="styles.css" />
   <!-- KaTeX -->
   <link rel="stylesheet" href="C:\katex-test\node_modules/katex/dist/katex.min.css">
   <script defer src="C:\katex-test\node_modules/katex/dist/katex.min.js"></script>
   <script defer src="C:\katex-test\node_modules/katex/dist/contrib/auto-render.min.js"></script>
 </head>
+<style>
+  #difficulty-row, #count-row {
+    display: none;
+  }
+</style>
 <body>
   <header class="container">
     <h1>一次方程式ジェネレーター</h1>
-    <p class="sub">整数版／分数版の問題をランダム作成（KaTeX表示）</p>
+    <p class="sub"></p>
   </header>
 
   <main class="container">
@@ -28,7 +33,7 @@
           </select>
         </div>
 
-        <div class="row">
+        <div class="row" id="difficulty-row">
           <label for="difficulty">難易度</label>
           <select id="difficulty" required>
             <option value="easy">やさしい</option>
@@ -37,7 +42,7 @@
           </select>
         </div>
 
-        <div class="row">
+        <div class="row" id="count-row">
           <label for="count">問題数</label>
           <input id="count" type="number" min="1" max="100" value="10" required />
         </div>

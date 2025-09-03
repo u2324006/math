@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>一次方程式クイズ</title>
+    <title>一次方程式</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="C:\katex-test\node_modules/katex/dist/katex.min.css">
   <script defer src="C:\katex-test\node_modules/katex/dist/katex.min.js"></script>
@@ -59,8 +59,7 @@
                 max-width: none;
                 padding: 0;
                 margin: 0;
-                gap: 20mm 15mm; /* row-gap column-gap */
-                align-content: space-evenly;
+                grid-template-rows: repeat(5, 1fr); /* Divide height into 5 equal rows */
             }
             .problem-card {
                 box-shadow: none;
@@ -69,7 +68,7 @@
                 justify-content: flex-start;
                 align-items: flex-start;
                 font-size: 1.1em;
-                padding: 0;
+                padding: 0 0 37mm 0; /* Adjusted padding-bottom to fit on one page */
             }
             .problem-card .problem-number {
                 width: 30px;
@@ -80,7 +79,7 @@
 </head>
 <body>
     <header class="container" style="display: flex; justify-content: space-between; align-items: center;">
-        <h1>一次方程式クイズ</h1>
+        <h1>一次方程式</h1>
         <div class="header-actions">
             <button id="toggle-answers-button">解答</button>
             <button id="print-button">印刷</button>

@@ -25,20 +25,15 @@ function toTex([n, d]) {
 function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 function randChoice(arr) { return arr[randInt(0, arr.length - 1)]; }
 
-function randomIntInRange(byDifficulty) {
-  const ranges = { easy: [-5, 5], normal: [-9, 9], hard: [-12, 12] };
-  const [lo, hi] = ranges[byDifficulty];
+function randomIntInRange() {
+  const [lo, hi] = [-9, 9];
   let v = 0;
   while (v === 0) v = randInt(lo, hi);
   return v;
 }
 
-function randomFrac(byDifficulty) {
-  const d_max = {
-    easy: 10,
-    normal: 20,
-    hard: 30
-  }[byDifficulty];
+function randomFrac() {
+  const d_max = 20;
 
   const n_max = 30;
 
@@ -51,10 +46,10 @@ function randomFrac(byDifficulty) {
   return simplify(n, d);
 }
 
-function randomRational(mode, difficulty) {
-  if (mode === 'int') return [randomIntInRange(difficulty), 1];
-  if (mode === 'frac') return randomFrac(difficulty);
-  return Math.random() < 0.5 ? [randomIntInRange(difficulty), 1] : randomFrac(difficulty);
+function randomRational(mode) {
+  if (mode === 'int') return [randomIntInRange(), 1];
+  if (mode === 'frac') return randomFrac();
+  return Math.random() < 0.5 ? [randomIntInRange(), 1] : randomFrac();
 }
 
 function coefToTex(coef, variable=false) {
@@ -84,10 +79,10 @@ function solveLinear({a,b,c,d}) {
   return div(num, den);
 }
 
-function genProblem(mode, difficulty) {
+function genProblem(mode) {
   let eq, xsol;
   let tries = 0;
-  
+
   do {
     // Decide coefficient/solution styles
     let coefMode, solMode;
@@ -101,17 +96,17 @@ function genProblem(mode, difficulty) {
     // Choose a target solution x first
     const x = solMode === 'int'
       ? [randInt(-9, 9) || 1, 1]
-      : randomFrac(difficulty);
+      : randomFrac();
 
     // Build equation
-    const a = randomRational(coefMode, difficulty);
-    let c = randomRational(coefMode, difficulty);
+    const a = randomRational(coefMode);
+    let c = randomRational(coefMode);
     let c_tries = 0;
     while (c[0] === a[0] && c[1] === a[1] && c_tries < 10) {
-      c = randomRational(coefMode, difficulty);
+      c = randomRational(coefMode);
       c_tries++;
     }
-    const b = randomRational(coefMode, difficulty);
+    const b = randomRational(coefMode);
     const d = sub(add(mul(a, x), b), mul(c, x));
 
     eq = { a, b, c, d };
@@ -139,13 +134,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Get parameters from URL
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode') || 'both';
-    const difficulty = urlParams.get('difficulty') || 'normal';
 
     const problemCount = 10; // 2x5 grid
 
     // Generate and display problems
     for (let i = 0; i < problemCount; i++) {
-        const problem = genProblem(mode, difficulty);
+        const problem = genProblem(mode);
         generatedProblems.push(problem);
         
         const card = document.createElement('div');

@@ -173,8 +173,6 @@ function renderList(list) {
 function main() {
   const form = document.getElementById('control-form');
   const modeEl = document.getElementById('mode');
-  const diffEl = document.getElementById('difficulty');
-  const countEl = document.getElementById('count');
   const clearBtn = document.getElementById('clear');
   
   let current = [];
@@ -182,7 +180,9 @@ function main() {
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const mode = modeEl.value;
-    const difficulty = diffEl.value;
+    // Hardcode difficulty to 'normal'
+    const difficulty = 'normal';
+    // Problem count is fixed at 10 in quiz.js, so no need to pass it here
     window.location.href = `quiz.html?mode=${mode}&difficulty=${difficulty}`;
   });
 
