@@ -1,0 +1,16 @@
+{
+  "name": "katex-linear-equation-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "KaTeX-based random linear equation problem generator (integers & fractions).",
+  "scripts": {
+    "serve": "http-server . -p 8080",
+    "start": "npm run serve"
+  },
+  "dependencies": {
+    "katex": "^0.16.11"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
