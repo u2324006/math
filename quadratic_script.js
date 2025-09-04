@@ -1,4 +1,4 @@
-// === Utility: Rational numbers (from script.js) ===
+// === Utility: Rational numbers ===
 function gcd(a, b) {
   a = Math.abs(a); b = Math.abs(b);
   while (b) { const t = b; b = a % b; a = t; }
@@ -17,114 +17,81 @@ function div([a,b], [c,d]) { return simplify(a*d, b*c); }
 function toTex([n, d]) {
   if (d === 1) return String(n);
   // format proper negative
-  if (n < 0) return '-\\frac{' + (-n) + '}{' + d + '}';
-  return '\\frac{' + n + '}{' + d + '}';
+  if (n < 0) return '-\frac{' + (-n) + '}{' + d + '}';
+  return '\frac{' + n + '}{' + d + '}';
+}
+function toString([n, d]) {
+  if (d === 1) return String(n);
+  return `${n}/${d}`;
 }
 
-// === Random helpers (from script.js) ===
-function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+// === Random helpers ===
+function randInt(min, max) { // inclusive
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 function randChoice(arr) { return arr[randInt(0, arr.length - 1)]; }
 
-function randomIntInRange() {
-  const [lo, hi] = [-9, 9];
-  let v = 0;
-  while (v === 0) v = randInt(lo, hi);
-  return v;
-}
-
-function randomFrac() {
-  const d_max = 20;
-
-  const n_max = 30;
-
-  let d = randInt(2, d_max);
-  let n = randInt(-n_max, n_max);
-  while (n === 0) {
-    n = randInt(-n_max, n_max);
+function formatCoef(val, variable) {
+  if (val === 0) {
+    return "";
   }
-
-  return simplify(n, d);
+  if (val === 1 && variable) {
+    return variable;
+  }
+  if (val === -1 && variable) {
+    return "-" + variable;
+  }
+  return val + variable;
 }
 
-function randomRational(mode) {
-  if (mode === 'int') return [randomIntInRange(), 1];
-  if (mode === 'frac') return randomFrac();
-  return Math.random() < 0.5 ? [randomIntInRange(), 1] : randomFrac();
-}
+function genQuadraticProblem(mode) {
+  // Generate integer roots for simplicity
+  let x1 = randInt(-5, 5);
+  let x2 = randInt(-5, 5);
 
-function coefToTex(coef, variable=false) {
-  const [n, d] = coef;
-  if (d === 1) {
-    if (variable) {
-      if (n === 1) return "x";
-      if (n === -1) return "-x";
-      return `${n}x`;
+  // Construct coefficients for (x - x1)(x - x2) = 0
+  // x^2 - (x1 + x2)x + x1*x2 = 0
+  let a = 1;
+  let b = -(x1 + x2);
+  let c = x1 * x2;
+
+  // Format equation in LaTeX
+  let equationTex = "";
+  let aTex = formatCoef(a, "x^2");
+  let bTex = formatCoef(b, "x");
+  let cTex = formatCoef(c, "");
+
+  // Build the equation string
+  if (aTex) {
+    equationTex += aTex;
+  }
+  if (bTex) {
+    if (b > 0 && equationTex !== "") {
+      equationTex += " + ";
+    } else if (b < 0) {
+      equationTex += " "; // Space for negative sign
     }
-    return `${n}`;
+    equationTex += bTex;
+  }
+  if (cTex) {
+    if (c > 0 && equationTex !== "") {
+      equationTex += " + ";
+    } else if (c < 0) {
+      equationTex += " "; // Space for negative sign
+    }
+    equationTex += cTex;
+  }
+  equationTex += " = 0";
+
+  // Format solutions in LaTeX
+  let ansTex = "";
+  if (x1 === x2) {
+    ansTex = `\\(x = ${x1}\\)`;
   } else {
-    const tex = toTex(coef);
-    return variable ? `${tex}x` : tex;
-  }
-}
-
-function equationToTex({a,b,c,d}) {
-  let left = coefToTex(a, true);
-  if (b[0] !== 0) {
-    left += ` ${b[0] >= 0 ? '+ ' : ''}${coefToTex(b, false)}`;
+    ansTex = `\\(x = ${x1}, x = ${x2}\\)`;
   }
 
-  let right = coefToTex(c, true);
-  if (d[0] !== 0) {
-    right += ` ${d[0] >= 0 ? '+ ' : ''}${coefToTex(d, false)}`;
-  }
-  return `${left} = ${right}`;
-}
-
-function solveLinear({a,b,c,d}) {
-  const num = sub(d, b);
-  const den = sub(a, c);
-  return div(num, den);
-}
-
-function genProblem(mode) {
-  let eq, xsol;
-  let tries = 0;
-
-  do {
-    // Decide coefficient/solution styles
-    let coefMode, solMode;
-    if (mode === 'int') { coefMode = 'int'; solMode = 'int'; }
-    else if (mode === 'frac') { coefMode = 'frac'; solMode = 'frac'; }
-    else { // both
-      coefMode = Math.random() < 0.5 ? 'int' : 'frac';
-      solMode  = Math.random() < 0.5 ? 'int' : 'frac';
-    }
-
-    // Choose a target solution x first
-    const x = solMode === 'int'
-      ? [randInt(-9, 9) || 1, 1]
-      : randomFrac();
-
-    // Build equation
-    const a = randomRational(coefMode);
-    let c = randomRational(coefMode);
-    let c_tries = 0;
-    while (c[0] === a[0] && c[1] === a[1] && c_tries < 10) {
-      c = randomRational(coefMode);
-      c_tries++;
-    }
-    const b = randomRational(coefMode);
-    const d = sub(add(mul(a, x), b), mul(c, x));
-
-    eq = { a, b, c, d };
-    tries++;
-  } while ((Math.abs(eq.d[0]) > 30 || eq.d[1] > 30) && tries < 200);
-  
-  xsol = solveLinear(eq);
-
-  const tex = `\\(${equationToTex(eq)}\\)`;
-  const ansTex = `\\(x = ${toTex(xsol)}\\)`;
-  return { tex, ansTex };
+  return { tex: `\\(${equationTex}\\)`, ansTex: ansTex };
 }
 
 // === Main function for quiz page ===
@@ -146,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Generate and display problems
     for (let i = 0; i < problemCount; i++) {
-        const problem = genProblem(mode);
+        const problem = genQuadraticProblem(mode); // Changed to genQuadraticProblem
         generatedProblems.push(problem);
         
         const card = document.createElement('div');
@@ -168,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const render = () => {
         renderMathInElement(problemGrid, {
             delimiters: [
-                {left: "$$", right: "$$", display: true},
+                {left: "$", right: "$", display: true},
                 {left: "\\(", right: "\\)", display: false},
             ]
         });

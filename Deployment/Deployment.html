@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>一次方程式ジェネレーター</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>多項式の展開</title>
+  <link rel="stylesheet" href="../styles.css" />
   <!-- KaTeX -->
-  <link rel="stylesheet" href="C:\katex-test\node_modules/katex/dist/katex.min.css">
-  <script defer src="C:\katex-test\node_modules/katex/dist/katex.min.js"></script>
-  <script defer src="C:\katex-test\node_modules/katex/dist/contrib/auto-render.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
 </head>
 <style>
   #difficulty-row, #count-row {
@@ -32,9 +32,8 @@
   }
 </style>
 <body>
-  <header class="container">
-    <h1>一次方程式ジェネレーター</h1>
-    <p class="sub"></p>
+  <header class="container" style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>多項式の展開</h1>
   </header>
 
   <main class="container">
@@ -43,9 +42,8 @@
         <div class="row">
           <label for="mode">種類</label>
           <select id="mode" required>
-            <option value="int">整数</option>
-            <option value="frac">分数</option>
-            <option value="both">すべて</option>
+            <option value="int">xの係数1</option>
+            <option value="frac">xの係数1以外も含む</option>
           </select>
         </div>
 
@@ -77,13 +75,13 @@
     
   </main>
 
+  <div class="back-button">
+    <button type="button" onclick="location.href='../homepage.html'" class="button">戻る</button>
+  </div>
+
   <footer class="container foot">
     <small>KaTeX 使用／ローカル読み込み（<code>node_modules/katex/dist</code>）</small>
   </footer>
-
-  <script defer src="script.js"></script>
-  <div class="back-button">
-    <a href="homepage.html" class="button">戻る</a>
-  </div>
+  <script src="../main_page_script.js"></script>
 </body>
 </html>
