@@ -37,8 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const maxAttempts = 100; // Safeguard against infinite loops
 
         do {
-            problem = genProblem(mode, difficulty);
-            problemString = JSON.stringify(problem); // Convert object to string for Set comparison
+            problem = genProblem(mode, difficulty, i);
+            problemString = problem.tex; // Use only the problem text for uniqueness check
             attempts++;
             if (attempts > maxAttempts) {
                 console.warn(`Could not generate unique problem after ${maxAttempts} attempts. Adding a duplicate.`);
