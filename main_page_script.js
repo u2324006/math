@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
             targetUrl = `Deployment_quiz.html?mode=${mode}&difficulty=${difficulty}`;
         } else if (window.location.pathname.includes('factorization')) {
             targetUrl = `factorization_quiz.html?mode=${mode}&difficulty=${difficulty}`;
+        } else if (window.location.pathname.includes('formula_calculation')) {
+            targetUrl = `formula_calculation_quiz.html?mode=${mode}&difficulty=${difficulty}`;
         } else {
             // Default to linear
             targetUrl = `linear_quiz.html?mode=${mode}&difficulty=${difficulty}`;
