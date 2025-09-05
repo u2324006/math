@@ -27,6 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
             targetUrl = `factorization_quiz.html?mode=${mode}&difficulty=${difficulty}`;
         } else if (window.location.pathname.includes('formula_calculation')) {
             targetUrl = `formula_calculation_quiz.html?mode=${mode}&difficulty=${difficulty}`;
+        } else if (window.location.pathname.includes('simultaneous_equations')) {
+            targetUrl = `simultaneous_equations_quiz.html?mode=${mode}&difficulty=${difficulty}`;
+        } else if (window.location.pathname.includes('square_roots')) {
+            targetUrl = `square_roots_quiz.html?mode=${mode}&difficulty=${difficulty}`;
         } else {
             // Default to linear
             targetUrl = `linear_quiz.html?mode=${mode}&difficulty=${difficulty}`;

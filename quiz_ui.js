@@ -70,9 +70,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof renderMathInElement === 'function') {
             renderMathInElement(problemGrid, {
                 delimiters: [
-                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: true},
                     {left: "$", right: "$", display: false},
-                ]
+                ],
+                strict: false
             });
         } else {
             console.error('KaTeX rendering function (renderMathInElement) not found.');
