@@ -24,29 +24,29 @@ function toTex([n, d]) {
 function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 function randChoice(arr) { return arr[randInt(0, arr.length - 1)]; }
 
-function randomIntInRange(difficulty = 'normal') {
+function randomIntInRange(difficulty = 2) {
   const ranges = {
-    easy: [-5, 5],
-    normal: [-9, 9],
-    hard: [-12, 12]
+    1: [-5, 5],
+    2: [-9, 9],
+    3: [-12, 12]
   };
-  const [lo, hi] = ranges[difficulty];
+  const [lo, hi] = ranges[difficulty] || ranges[2];
   let v = 0;
   while (v === 0) v = randInt(lo, hi);
   return v;
 }
 
-function randomFrac(difficulty = 'normal') {
+function randomFrac(difficulty = 2) {
   const d_max = {
-    easy: 5,
-    normal: 8,
-    hard: 12
-  }[difficulty];
+    1: 5,
+    2: 8,
+    3: 12
+  }[difficulty] || 8;
   const n_max = {
-    easy: 10,
-    normal: 15,
-    hard: 20
-  }[difficulty];
+    1: 10,
+    2: 15,
+    3: 20
+  }[difficulty] || 15;
   let d = randInt(2, d_max);
   let n = randInt(-n_max, n_max);
   while (n === 0) n = randInt(-n_max, n_max);

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>二次方程式ジェネレーター</title>
+  <title>連立方程式</title>
   <link rel="stylesheet" href="../styles.css" />
   <!-- KaTeX -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
@@ -33,7 +33,7 @@
 </style>
 <body>
   <header class="container" style="display: flex; justify-content: space-between; align-items: center;">
-    <h1>二次方程式ジェネレーター</h1>
+    <h1>連立方程式</h1>
   </header>
 
   <main class="container">
@@ -42,11 +42,8 @@
         <div class="row">
           <label for="mode">種類</label>
           <select id="mode" required>
-            <option value="int">整数</option>
-            <option value="frac">分数</option>
-            <option value="heavy_diff_squares">重解と平方差</option>
-            <option value="quadratic_formula">解の公式</option>
-            <option value="both">すべて</option>
+            <option value="int">整数解のみ</option>
+            <option value="frac">分数解を含む</option>
           </select>
         </div>
 
@@ -85,7 +82,6 @@
   <footer class="container foot">
     <small>KaTeX 使用／ローカル読み込み（<code>node_modules/katex/dist</code>）</small>
   </footer>
-
   <script src="../main_page_script.js"></script>
 </body>
 </html>

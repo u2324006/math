@@ -27,7 +27,7 @@ function formatNumerator(a, b) {
     return parts.join('');
 }
 
-function genProblem(mode, difficulty) { // mode is used for difficulty selection
+function genFractionalEquationProblem(mode, difficulty) { // mode is used for difficulty selection
     const settings = {
         normal: {
             max_denom: 9,
@@ -43,17 +43,23 @@ function genProblem(mode, difficulty) { // mode is used for difficulty selection
     // 1. Generate components for the two fractions
     let a, b, c, e, d1, d2;
 
-    // Generate denominators that are coprime and not equal
-    d1 = randInt(2, diff.max_denom);
+    // Generate first fraction (ax+b)/d1 to be simplified
+    do {
+        d1 = randInt(2, diff.max_denom);
+        a = randInt(1, diff.max_coeff);
+        b = randInt(-diff.max_coeff, diff.max_coeff);
+    } while (gcd(gcd(Math.abs(a), Math.abs(b)), d1) !== 1);
+
+    // Generate denominator for second fraction, coprime to d1
     do {
         d2 = randInt(2, diff.max_denom);
     } while (d1 === d2 || gcd(d1, d2) !== 1);
 
-    // Generate coefficients for numerators
-    a = randInt(1, diff.max_coeff);
-    b = randInt(-diff.max_coeff, diff.max_coeff);
-    c = randInt(1, diff.max_coeff);
-    e = randInt(-diff.max_coeff, diff.max_coeff);
+    // Generate numerator for second fraction (cx+e) to be simplified with d2
+    do {
+        c = randInt(1, diff.max_coeff);
+        e = randInt(-diff.max_coeff, diff.max_coeff);
+    } while (gcd(gcd(Math.abs(c), Math.abs(e)), d2) !== 1);
 
     // Randomly choose operator (+1 for +, -1 for -)
     const op_val = (Math.random() < 0.5) ? 1 : -1;

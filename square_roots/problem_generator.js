@@ -4,7 +4,7 @@ function genProblem(mode, difficulty) {
     let problem;
     let selectedType;
 
-    const totalSumDiffRequired = SUM_DIFF_DISTRIBUTION[2] + SUM_DIFF_DISTRIBUTION[3] + SUM_DIFF_DISTRIBUTION[4];
+    const totalSumDiffRequired = SUM_DIFF_DISTRIBUTION[2] + SUM_DIFF_DISTRIBUTION[3] + SUM_DIFF_DISTRIBUTION[4] ;
 
     if (sumDiffProblemsGeneratedCount < totalSumDiffRequired) {
         // Prioritize sum_diff problems until the required distribution is met
@@ -30,17 +30,9 @@ function genProblem(mode, difficulty) {
                 numTermsToGenerate = 4;
                 sumDiff4TermCount++;
             } else {
-                // This case should ideally not be reached if totalSumDiffRequired logic is correct,
-                // but as a fallback, reset and recurse or pick a default.
-                // For now, let's assume the outer logic handles it.
-                // If it does get here, it means we've generated more sum_diff than expected,
-                // or the counts were not reset properly.
                 sumDiff2TermCount = 0;
                 sumDiff3TermCount = 0;
                 sumDiff4TermCount = 0;
-                // Recurse to pick a term count from the beginning of the distribution
-                // This recursion might lead to infinite loop if totalSumDiffRequired is not handled correctly
-                // Let's simplify this part for now, assuming the outer if-else handles the selection.
                 numTermsToGenerate = 2; // Fallback
             }
             problem = generateSumDiffProblem(difficulty, numTermsToGenerate);
@@ -52,7 +44,6 @@ function genProblem(mode, difficulty) {
             problem = generateQuotientProblem(difficulty);
             break;
         default:
-            // This should not be reached with the current logic
             problem = generateSumDiffProblem(difficulty, 2); // Fallback
     }
 
@@ -74,9 +65,27 @@ const SUM_DIFF_DISTRIBUTION = {
 // function gcd(a, b) { ... }
 // function simplify(num, den) { ... }
 // function randInt(min, max) { ... }
-// function randChoice(arr) { ... }
 
-// --- Square Root Specific Helpers --- 
+/**
+ * Selects one or more random elements from an array.
+ * @param {Array} arr The array to choose from.
+ * @param {number} count The number of elements to choose.
+ * @returns A single element if count is 1, or an array of elements otherwise.
+ */
+function randChoice(arr, count = 1) {
+    if (arr.length === 0) return count === 1 ? undefined : [];
+    if (count === 1) return arr[Math.floor(Math.random() * arr.length)];
+    
+    // Fisher-Yates shuffle for multiple selections
+    const shuffled = arr.slice();
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.slice(0, count);
+}
+
+// --- Square Root Specific Helpers ---
 
 // Simplifies sqrt(n) to a*sqrt(b) where b has no square factors
 function simplifySqrt(n) {
@@ -98,18 +107,17 @@ function simplifySqrt(n) {
 // Formats a*sqrt(b) into LaTeX
 function formatSqrt(coefficient, radicand) {
     if (coefficient === 0) return "0";
-    if (radicand === 0) return "0"; // Should not happen if simplifySqrt is used correctly
-    if (radicand === 1) return String(coefficient); // If radicand is 1, just return the coefficient
+    if (radicand === 0) return "0";
+    if (radicand === 1) return String(coefficient);
 
-    // Handle coefficient of 1 or -1
     if (Math.abs(coefficient) === 1) {
         if (coefficient === 1) {
             return `\\sqrt{${radicand}}`;
-        } else { // coefficient === -1
+        }
+        else { // coefficient === -1
             return `-\\sqrt{${radicand}}`;
         }
     }
-    // For other coefficients
     return `${coefficient}\\sqrt{${radicand}}`;
 }
 
@@ -119,26 +127,103 @@ function generateSqrtTerm(difficulty) {
     const max_radicand = { easy: 25, normal: 50, hard: 100 }[difficulty] || 50;
 
     const coeff = randInt(1, max_coeff) * (Math.random() < 0.5 ? 1 : -1); // Can be negative
-    const radicand = randInt(1, max_radicand); // Original radicand, can be perfect square
+    const radicand = randInt(1, max_radicand);
 
-    return [coeff, radicand]; // Returns [a, b] for a*sqrt(b)
+    return [coeff, radicand];
 }
 
-// --- Problem Generators for each type --- 
+// --- Problem Generators for each type ---
 
-function generateSumDiffProblem(difficulty, numTerms = 2) {
-    let terms = [];
-    let problemTexParts = [];
-
-    for (let i = 0; i < numTerms; i++) {
-        const [coeff, radicand] = generateSqrtTerm(difficulty);
-        terms.push({ coeff, radicand });
-        problemTexParts.push(formatSqrt(coeff, radicand));
+function generateSumDiffProblem(difficulty, numTerms = 2, _attempt = 0) {
+    if (_attempt > 100) { // Increased attempts for the stricter constraints
+        console.warn(`Max attempts reached for generateSumDiffProblem with ${numTerms} terms.`);
+        return { tex: '$1+1$', ansTex: '$2$' };
     }
 
-    // For now, just join the terms with ' + '
-    const problemTex = problemTexParts.join(' + ');
-    const answerTex = problemTex; // Placeholder for now
+    const terms = [];
+    for (let i = 0; i < numTerms; i++) {
+        let coeff, radicand;
+        let termAttempt = 0;
+        do {
+            if (termAttempt++ > 50) {
+                // If we can't find a suitable term, the whole problem might be unsolvable with the current constraints.
+                // Restarting the whole generation process is the best bet.
+                return generateSumDiffProblem(difficulty, numTerms, _attempt + 1);
+            }
+            [coeff, radicand] = generateSqrtTerm(difficulty);
+            
+            // --- Improvement: Avoid terms that directly cancel each other out ---
+            // This prevents generating a term that is the exact opposite of a previously generated term.
+        } while (terms.some(t => t.radicand === radicand && t.coeff === -coeff));
+        
+        terms.push({ coeff, radicand });
+    }
+
+    // --- Improvement: Check for terms that would pass through to the answer "as-is" ---
+    const simplifiedRadicandCounts = new Map();
+    for (const term of terms) {
+        const simplifiedRadicand = simplifySqrt(term.radicand)[1];
+        const currentCount = simplifiedRadicandCounts.get(simplifiedRadicand) || 0;
+        simplifiedRadicandCounts.set(simplifiedRadicand, currentCount + 1);
+    }
+
+    const hasAsIsTerm = terms.some(term => {
+        const [sc, sr] = simplifySqrt(term.radicand);
+        // A term is "as-is" if its radicand is already square-free and it's the only term 
+        // with that radicand, meaning it's won't be simplified or combined.
+        return sc === 1 && simplifiedRadicandCounts.get(sr) === 1;
+    });
+
+    // For problems with more than one term, we want to avoid "as-is" terms to ensure simplification is needed.
+    if (numTerms > 1 && hasAsIsTerm) {
+        return generateSumDiffProblem(difficulty, numTerms, _attempt + 1);
+    }
+
+    // If the problem is valid, build the display string and calculate the answer.
+    let problemTex = '';
+    const simplifiedTerms = new Map();
+    for (let i = 0; i < terms.length; i++) {
+        const { coeff, radicand } = terms[i];
+        
+        if (i === 0) {
+            problemTex += formatSqrt(coeff, radicand);
+        } else {
+            problemTex += (coeff < 0) ? ` - ${formatSqrt(Math.abs(coeff), radicand)}` : ` + ${formatSqrt(coeff, radicand)}`;
+        }
+
+        const [simplifiedCoeff, simplifiedRadicand] = simplifySqrt(radicand);
+        const totalCoeffForTerm = coeff * simplifiedCoeff;
+        const currentTotal = simplifiedTerms.get(simplifiedRadicand) || 0;
+        simplifiedTerms.set(simplifiedRadicand, currentTotal + totalCoeffForTerm);
+    }
+
+    const answerTexParts = [];
+    for (const [radicand, coeff] of simplifiedTerms.entries()) {
+        if (coeff !== 0) {
+            answerTexParts.push({ coeff, radicand });
+        }
+    }
+
+    // --- Improvement: For problems with 3+ terms, the answer must have at most 2 terms ---
+    if (numTerms >= 3 && answerTexParts.length > 2) {
+        return generateSumDiffProblem(difficulty, numTerms, _attempt + 1);
+    }
+    
+    answerTexParts.sort((a, b) => a.radicand - b.radicand);
+
+    let answerTex = '';
+    if (answerTexParts.length === 0) {
+        answerTex = '0';
+    } else {
+        for (let i = 0; i < answerTexParts.length; i++) {
+            const { coeff, radicand } = answerTexParts[i];
+            if (i === 0) {
+                answerTex += formatSqrt(coeff, radicand);
+            } else {
+                answerTex += (coeff < 0) ? ` - ${formatSqrt(Math.abs(coeff), radicand)}` : ` + ${formatSqrt(coeff, radicand)}`;
+            }
+        }
+    }
 
     return { tex: `$${problemTex}$`, ansTex: `$${answerTex}$` };
 }
@@ -159,13 +244,11 @@ function generateProductProblem(difficulty) {
         const [c1_orig, r1_orig] = generateSqrtTerm(difficulty);
         const [c2_orig, r2_orig] = generateSqrtTerm(difficulty);
 
-        const problemTex = String.raw`(${formatSqrt(c1_orig, r1_orig)}) \times (${formatSqrt(c2_orig, r2_orig)})`;
+        const problemTex = `(${formatSqrt(c1_orig, r1_orig)}) \\times (${formatSqrt(c2_orig, r2_orig)})`;
 
-        // Calculate the product
         const product_coeff_raw = c1_orig * c2_orig;
         const product_radicand_raw = r1_orig * r2_orig;
 
-        // Simplify the product
         const [ans_coeff_simplified, ans_radicand_simplified] = simplifySqrt(product_radicand_raw);
 
         const final_ans_coeff = product_coeff_raw * ans_coeff_simplified;
@@ -173,7 +256,6 @@ function generateProductProblem(difficulty) {
 
         const answerTex = formatSqrt(final_ans_coeff, final_ans_radicand);
 
-        // Check if answer components are within limits
         if (Math.abs(final_ans_coeff) <= 30 && Math.abs(final_ans_radicand) <= 30) {
             isValidAnswer = true;
         }
@@ -197,7 +279,6 @@ function generateQuotientProblem(difficulty) {
             break;
         }
 
-        // 1. Generate the answer first (integer coefficient)
         const max_ans_coeff = { easy: 5, normal: 10, hard: 15 }[difficulty] || 10;
         const max_ans_radicand = { easy: 10, normal: 20, hard: 30 }[difficulty] || 20;
 
@@ -205,43 +286,40 @@ function generateQuotientProblem(difficulty) {
         let ans_radicand;
         do {
             ans_radicand = randInt(1, max_ans_radicand);
-        } while (simplifySqrt(ans_radicand)[1] !== ans_radicand && ans_radicand !== 1); // Ensure ans_radicand is square-free or 1
+        } while (simplifySqrt(ans_radicand)[1] !== ans_radicand && ans_radicand !== 1);
 
-        // 2. Generate the divisor (second term)
         let c2_orig, r2_orig; 
         do {
             [c2_orig, r2_orig] = generateSqrtTerm(difficulty);
-        } while (c2_orig === 0 || r2_orig === 0 || simplifySqrt(r2_orig)[1] === 1); // Ensure divisor is not zero or too simple (e.g., sqrt(1))
+        } while (c2_orig === 0 || r2_orig === 0 || simplifySqrt(r2_orig)[1] === 1);
 
-        // 3. Calculate the dividend (first term) = Answer * Divisor
-        // (ans_coeff * sqrt(ans_radicand)) * (c2_orig * sqrt(r2_orig))
         const c1_orig_raw = ans_coeff * c2_orig;
         const r1_orig_raw = ans_radicand * r2_orig;
 
-        // Simplify the dividend's radicand to get its display form
         const [s_c1_orig, s_r1_orig] = simplifySqrt(r1_orig_raw);
         let c1_orig = c1_orig_raw * s_c1_orig; 
         let r1_orig = s_r1_orig; 
 
-        // Check if generated problem terms are within reasonable limits for display
         if (Math.abs(c1_orig) > 50 || Math.abs(r1_orig) > 100 || Math.abs(c2_orig) > 50 || Math.abs(r2_orig) > 100) {
             isValidProblem = false;
-            continue; // Regenerate if terms are too large
+            continue;
         }
 
         let term1Formatted = formatSqrt(c1_orig, r1_orig);
         let term2Formatted = formatSqrt(c2_orig, r2_orig);
 
         if (term2Formatted.startsWith('-')) {
-            term2Formatted = `(${term2Formatted})`; // Wrap in parentheses if negative
+            term2Formatted = `(${term2Formatted})`;
         }
 
-        const problemTex = String.raw`${term1Formatted} \div ${term2Formatted}`; // Using \div as requested
+        const problemTex = `${
+            term1Formatted
+        } \\div ${
+            term2Formatted
+        }`;
 
-        // The answer is already generated as ans_coeff * sqrt(ans_radicand)
         const answerTex = formatSqrt(ans_coeff, ans_radicand);
 
-        // Final validation for answer components (should always pass with this method)
         if (Math.abs(ans_coeff) <= 30 && Math.abs(ans_radicand) <= 30) {
             isValidProblem = true;
         }

@@ -1,4 +1,4 @@
-// Depends on: math_utils.js and a problem_generator.js file
+
 
 document.addEventListener('DOMContentLoaded', () => {
     // Check if genProblem function is available
@@ -37,11 +37,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const maxAttempts = 100; // Safeguard against infinite loops
 
         do {
-            problem = genProblem(mode, difficulty, i);
+            if (mode === 'frac_eq' && typeof genFractionalEquationProblem === 'function') {
+                problem = genFractionalEquationProblem(mode, difficulty); // Call the specific function
+            } else {
+                problem = genProblem(mode, difficulty, i); // Original call
+            }
             problemString = problem.tex; // Use only the problem text for uniqueness check
             attempts++;
             if (attempts > maxAttempts) {
-                console.warn(`Could not generate unique problem after ${maxAttempts} attempts. Adding a duplicate.`);
+                console.warn('Could not generate unique problem after ' + maxAttempts + ' attempts. Adding a duplicate.');
                 break; // Exit loop to avoid infinite loop
             }
         } while (problemSet.has(problemString));
@@ -58,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const equationEl = document.createElement('span');
         equationEl.className = 'equation-content';
-        equationEl.innerHTML = problem.tex;
+        equationEl.textContent = problem.tex;
 
         card.appendChild(numberEl);
         card.appendChild(equationEl);
@@ -68,10 +72,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const render = () => {
         // Check if renderMathInElement is available
         if (typeof renderMathInElement === 'function') {
+            console.log('renderMathInElement called with:', problemGrid);
             renderMathInElement(problemGrid, {
                 delimiters: [
                     {left: "$", right: "$", display: true},
                     {left: "$", right: "$", display: false},
+                    {left: "\\(", right: "\\)", display: false},
+                    {left: "\\[", right: "\\]", display: true}
                 ],
                 strict: false
             });
@@ -95,9 +102,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const equationEl = card.querySelector('.equation-content');
             if (equationEl) {
                 if (showingAnswers) {
-                    equationEl.innerHTML = generatedProblems[index].ansTex;
+                    console.log('ansTex for problem', index + 1, ':', generatedProblems[index].ansTex);
+                    equationEl.textContent = generatedProblems[index].ansTex;
                 } else {
-                    equationEl.innerHTML = generatedProblems[index].tex;
+                    console.log('tex for problem', index + 1, ':', generatedProblems[index].tex);
+                    equationEl.textContent = generatedProblems[index].tex;
                 }
             }
         });
