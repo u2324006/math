@@ -9,6 +9,8 @@
 - 新たに問題生成ファイルを作るとき、Deploymentファルダをコピーしてその中にあるファイルの名前を変更する。
 - problem_generator.jsを編集してプログラムを作成する。
 - リンクが正しく遷移するように修正する。
+- 新たに計算項目を追加するときは該当のHTMLのドロップダウンメニューに追加すること。
+- よく出るエラーに書かれたエラーが出ることがないように注意すること。
 
 ## 指示の仕方
 - Reference:ファイル名で参照してほしいファイルを指示。
@@ -16,7 +18,12 @@
 
 ## 数式の注意点
 - 問題に使用する分数は必ず約分済みにしてください。
+- 解答も約分された状態にしてください。
 - 同じ問題が10問の中に出題されないようにする。
+- 解答の分母に負の値が入らないようにしてください。
+- 符号が重ならないようにしてください。
+- 係数が1の場合は省略すること。
+- 常に数学的に適切かどうかを考えてください。
 - // NG ❌: "\f"が特殊文字（フォームフィード）として解釈され、KaTeXは "rac..." という不正な文字列を受け取る
 const wrongTex = "\frac{5x+9}{6} - \frac{2x-7}{7}";
 
@@ -54,4 +61,10 @@ const correctTex = "\\frac{5x+9}{6} - \\frac{2x-7}{7}";
        * KaTeX（数式表示ライブラリ）を呼び出して、数式をきれいに表示する役割も担っています。
 
 ## よく出るエラー例
-
+- Uncaught SyntaxError: Invalid or unexpected token
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again
+quiz_ui.js:11  Error: genProblem() function not found. Make sure a problem generator script is loaded before quiz_ui.js.
