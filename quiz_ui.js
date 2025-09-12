@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode') || 'both';
     const difficulty = urlParams.get('difficulty') || 'normal';
+    const type = urlParams.get('type');
 
     const problemCount = 10; // 2x5 grid
 
@@ -43,8 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
         do {
             if (mode === 'frac_eq' && typeof genFractionalEquationProblem === 'function') {
                 problem = genFractionalEquationProblem(mode, difficulty); // Call the specific function
-            } else {
-                problem = genProblem(mode, difficulty, i); // Original call
+            } 
+            else {
+                problem = genProblem(mode, difficulty, i, type); // Original call with type
             }
             problemString = problem.tex; // Use only the problem text for uniqueness check
             attempts++;
@@ -64,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         numberEl.className = 'problem-number';
         numberEl.textContent = `(${i + 1})`;
 
-        const equationEl = document.createElement('span');
+        const equationEl = document.createElement('div');
         equationEl.className = 'equation-content';
         console.log('Problem tex string (before katex.renderToString):', problem.tex); // Changed console.log
         equationEl.innerHTML = katex.renderToString(problem.tex, {throwOnError: false}); // Changed to use katex.renderToString

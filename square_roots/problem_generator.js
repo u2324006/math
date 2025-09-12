@@ -139,7 +139,7 @@ function formatSqrt(coefficient, radicand) {
 
 // Generates a random square root term (a*sqrt(b)) where b is the original radicand
 function generateSqrtTerm(difficulty) {
-    const max_coeff = { easy: 3, normal: 5, hard: 7 }[difficulty] || 5;
+    const max_coeff = 5;
     const max_radicand = { easy: 25, normal: 50, hard: 100 }[difficulty] || 50;
 
     const coeff = randInt(1, max_coeff) * (Math.random() < 0.5 ? 1 : -1); // Can be negative
@@ -331,7 +331,7 @@ function generateQuotientProblem(difficulty) {
             break;
         }
 
-        const max_ans_coeff = { easy: 5, normal: 10, hard: 15 }[difficulty] || 10;
+        const max_ans_coeff = 10;
         const max_ans_radicand = { easy: 10, normal: 20, hard: 30 }[difficulty] || 20;
 
         let ans_coeff = randInt(1, max_ans_coeff) * (Math.random() < 0.5 ? 1 : -1);
@@ -398,147 +398,167 @@ function generateRationalizationProblem(difficulty) {
             console.warn("Max attempts reached for generating a valid rationalization problem. Returning potentially invalid problem.");
             // フォールバック: 簡単な有理化の問題を生成
             const a = 1;
-            const b = 1;
-            const c = 1;
-            const d = 2; // sqrt(2)は完全平方数ではない
-            const problemTex = `\\frac{${a}}{${b} + \\sqrt{${d}}}`;
-            const answerTex = `\\frac{${a}(${b} - \\sqrt{${d}})}{${b * b - c * c * d}}`;
+            const d = 2;
+            const problemTex = `\\frac{${a}}{\\sqrt{${d}}}`;
+            const answerTex = `\\frac{${a}\\sqrt{${d}}}{${d}}`;
             problemData = { tex: `$${problemTex}$`, ansTex: `$${answerTex}$` };
             break;
         }
 
         // 有理化の問題は2つのタイプに分ける
-        // タイプ1: (a)/sqrt(b) や (a)/(b + sqrt(c)) の問題（5問）
-        // タイプ2: (√a + √b) / (√a - √b)や(√a + b) / (√a - b) の問題（5問）
+        // タイプ1: a/√b や √a/√b の問題（5問）
+        // タイプ2: (√a ± √b) / (√a ∓ √b) や (√a ± b) / (√a ∓ b) の問題（5問）
         
         let problemType;
         if (rationalizationSimpleCount < 5) {
             problemType = 'simple';
-            rationalizationSimpleCount++;
         } else if (rationalizationComplexCount < 5) {
             problemType = 'complex';
-            rationalizationComplexCount++;
         } else {
             // 10問生成後はリセット
             rationalizationSimpleCount = 0;
             rationalizationComplexCount = 0;
             problemType = 'simple';
-            rationalizationSimpleCount++;
         }
         
         if (problemType === 'simple') {
-            // 簡単な形: (a)/sqrt(b) または (a)/(b + sqrt(c))
-            const max_coeff = { easy: 3, normal: 5, hard: 7 }[difficulty] || 5;
+            rationalizationSimpleCount++;
+            // 簡単な形: a/√b または √a/√b
+            const max_coeff = 7;
             const max_radicand = { easy: 10, normal: 20, hard: 30 }[difficulty] || 20;
             
-            // 有理化の問題なので必ず分数の形で分母にルートを含む
-            // 50%の確率で (a)/sqrt(b) または (a)/(b + sqrt(c)) を選択
             if (Math.random() < 0.5) {
-                // (a)/sqrt(b) の形
+                // a/√b の形
                 let a, b;
                 do {
-                    a = randInt(1, max_coeff) * (Math.random() < 0.5 ? 1 : -1);
+                    a = randInt(1, max_coeff);
                     b = randInt(2, max_radicand);
-                } while (isPerfectSquare(b) || Math.abs(a) > 20);
+                } while (isPerfectSquare(b));
                 
                 const problemTex = `\\frac{${a}}{\\sqrt{${b}}}`;
-                const [coeff, radicand] = simplifySqrt(b);
-                const denominator = coeff * radicand;
-                const sqrtTerm = a === 1 ? `\\sqrt{${radicand}}` : a === -1 ? `-\\sqrt{${radicand}}` : `${a}\\sqrt{${radicand}}`;
-                const answerTex = denominator === 1 ? sqrtTerm : `\\frac{${sqrtTerm}}{${denominator}}`;
+                const [s_coeff, s_rad] = simplifySqrt(b);
+                const num = formatSqrt(a * s_coeff, s_rad);
+                const den = b;
                 
+                const common = gcd(a*s_coeff, den);
+
+                const final_num = formatSqrt((a*s_coeff)/common, s_rad);
+                const final_den = den/common;
+
+                const answerTex = final_den === 1 ? final_num : `\\frac{${final_num}}{${final_den}}`;
+
                 problemData = { tex: `$${problemTex}$`, ansTex: `$${answerTex}$` };
                 isValidProblem = true;
+
             } else {
-                // (a)/(b + sqrt(c)) の形
-                let a, b, c;
+                // √a/√b の形
+                let a, b;
                 do {
-                    a = randInt(1, max_coeff) * (Math.random() < 0.5 ? 1 : -1);
-                    b = randInt(1, max_coeff);
-                    c = randInt(2, max_radicand);
-                } while (isPerfectSquare(c) || Math.abs(a) > 20 || Math.abs(b) > 20);
+                    a = randInt(2, max_radicand);
+                    b = randInt(2, max_radicand);
+                } while (isPerfectSquare(a) || isPerfectSquare(b) || a === b);
+
+                const problemTex = `\\frac{\\sqrt{${a}}}{\\sqrt{${b}}}`;
+                const num_rad = a * b;
+                const den = b;
+
+                const [s_coeff, s_rad] = simplifySqrt(num_rad);
                 
-                const problemTex = `\\frac{${a}}{${b} + \\sqrt{${c}}}`;
-                const denominator = b * b - c;
-                
-                // 分母が負の場合は再生成
-                if (denominator <= 0) {
-                    continue;
-                }
-                
-                // 分子を展開
-                const expanded_numerator = a * b;
-                const sqrt_coeff = -a;
-                const sqrt_term = formatSqrt(sqrt_coeff, c);
-                
-                // 定数項が0の場合は省略
-                const constant_term = expanded_numerator === 0 ? "" : `${expanded_numerator}`;
-                const separator = expanded_numerator === 0 ? "" : (sqrt_coeff > 0 ? " + " : " ");
-                
-                const answerTex = Math.abs(denominator) === 1 ? 
-                    (denominator === 1 ? `${constant_term}${separator}${sqrt_term}` : `-${constant_term}${expanded_numerator === 0 ? "" : " - "}${sqrt_term}`):
-                    `\\frac{${constant_term}${separator}${sqrt_term}}{${denominator}}`;
-                
+                const common = gcd(s_coeff, den);
+                const final_num = formatSqrt(s_coeff/common, s_rad);
+                const final_den = den/common;
+
+                const answerTex = final_den === 1 ? final_num : `\\frac{${final_num}}{${final_den}}`;
+
                 problemData = { tex: `$${problemTex}$`, ansTex: `$${answerTex}$` };
                 isValidProblem = true;
             }
 
         } else {
-            // 複雑な形: (√a + √b) / (√a - √b) または (√a + b) / (√a - b)
-            const max_coeff = { easy: 3, normal: 4, hard: 5 }[difficulty] || 4;
+            rationalizationComplexCount++;
+            // 複雑な形: (√a ± √b) / (√a ∓ √b) または (√a ± b) / (√a ∓ b)
+            const max_coeff = 4;
             const max_radicand = { easy: 8, normal: 15, hard: 20 }[difficulty] || 15;
             
-            // 50%の確率で (√a + √b) / (√a - √b) または (√a + b) / (√a - b) を選択
             if (Math.random() < 0.5) {
-                // (√a + √b) / (√a - √b) の形
+                // (√a ± √b) / (√a ∓ √b) の形
                 let a, b;
                 do {
                     a = randInt(2, max_radicand);
                     b = randInt(2, max_radicand);
                 } while (a === b || isPerfectSquare(a) || isPerfectSquare(b));
                 
-                const problemTex = `\\frac{\\sqrt{${a}} + \\sqrt{${b}}}{\\sqrt{${a}} - \\sqrt{${b}}}`;
-                const denominator = a - b;
+                const top_op_is_plus = Math.random() < 0.5;
                 
-                // 分母が負の場合は再生成
-                if (denominator <= 0) {
-                    continue;
+                const problemTex = `\\frac{\\sqrt{${a}} ${top_op_is_plus ? '+' : '-'} \\sqrt{${b}}}{\\sqrt{${a}} ${top_op_is_plus ? '-' : '+'} \\sqrt{${b}}}`;
+                
+                const den = a - b;
+                if (den <= 0) continue;
+
+                const num_const = a + b;
+                const num_sqrt_coeff = top_op_is_plus ? 2 : -2;
+                const [s_coeff, s_rad] = simplifySqrt(a*b);
+                const final_sqrt_coeff = num_sqrt_coeff * s_coeff;
+
+                const common = gcd(gcd(num_const, Math.abs(final_sqrt_coeff)), den);
+
+                const final_num_const = num_const / common;
+                const final_sqrt_coeff_simplified = final_sqrt_coeff / common;
+                const final_den = den / common;
+
+                let final_num_str = `${final_num_const}`;
+                const final_sqrt_term = formatSqrt(final_sqrt_coeff_simplified, s_rad);
+                if (final_sqrt_coeff_simplified !== 0) {
+                    if (final_sqrt_term.startsWith('-')) {
+                        final_num_str += ` ${final_sqrt_term}`;
+                    } else {
+                        final_num_str += ` + ${final_sqrt_term}`;
+                    }
                 }
                 
-                // ルートを簡略化
-                const [sqrt_coeff, sqrt_radicand] = simplifySqrt(a * b);
-                const sqrt_term = formatSqrt(2 * sqrt_coeff, sqrt_radicand);
-                
-                const answerTex = Math.abs(denominator) === 1 ? 
-                    (denominator === 1 ? `${a + b} + ${sqrt_term}` : `-${a + b} - ${sqrt_term}`):
-                    `\\frac{${a + b} + ${sqrt_term}}{${denominator}}`;
-                
+                const answerTex = final_den === 1 ? final_num_str : `\\frac{${final_num_str}}{${final_den}}`;
+
                 problemData = { tex: `$${problemTex}$`, ansTex: `$${answerTex}$` };
                 isValidProblem = true;
+
             } else {
-                // (√a + b) / (√a - b) の形
+                // (√a ± b) / (√a ∓ b) の形
                 let a, b;
                 do {
                     a = randInt(2, max_radicand);
                     b = randInt(1, max_coeff);
-                } while (isPerfectSquare(a) || Math.abs(b) > 15);
-                
-                const problemTex = `\\frac{\\sqrt{${a}} + ${b}}{\\sqrt{${a}} - ${b}}`;
-                const denominator = a - b * b;
-                
-                // 分母が負の場合は再生成
-                if (denominator <= 0) {
-                    continue;
+                } while (isPerfectSquare(a) || a === b*b);
+
+                const top_op_is_plus = Math.random() < 0.5;
+
+                const problemTex = `\\frac{\\sqrt{${a}} ${top_op_is_plus ? '+' : '-'} ${b}}{\\sqrt{${a}} ${top_op_is_plus ? '-' : '+'} ${b}}`;
+                const den = a - b*b;
+
+                if (den <= 0) continue;
+
+                const num_const = a + b*b;
+                const num_sqrt_coeff = top_op_is_plus ? 2*b : -2*b;
+                const [s_coeff, s_rad] = simplifySqrt(a);
+                const final_sqrt_coeff = num_sqrt_coeff * s_coeff;
+
+                const common = gcd(gcd(num_const, Math.abs(final_sqrt_coeff)), den);
+
+                const final_num_const = num_const / common;
+                const final_sqrt_coeff_simplified = final_sqrt_coeff / common;
+                const final_den = den / common;
+
+                let final_num_str = `${final_num_const}`;
+                const final_sqrt_term = formatSqrt(final_sqrt_coeff_simplified, s_rad);
+                if (final_sqrt_coeff_simplified !== 0) {
+                    if (final_sqrt_term.startsWith('-')) {
+                        final_num_str += ` ${final_sqrt_term}`;
+                    } else {
+                        final_num_str += ` + ${final_sqrt_term}`;
+                    }
                 }
-                
-                // ルートを簡略化
-                const [sqrt_coeff, sqrt_radicand] = simplifySqrt(a);
-                const sqrt_term = formatSqrt(2 * b * sqrt_coeff, sqrt_radicand);
-                
-                const answerTex = Math.abs(denominator) === 1 ? 
-                    (denominator === 1 ? `${a + b * b} + ${sqrt_term}` : `-${a + b * b} - ${sqrt_term}`):
-                    `\\frac{${a + b * b} + ${sqrt_term}}{${denominator}}`;
-                
+
+                const answerTex = final_den === 1 ? final_num_str : `\\frac{${final_num_str}}{${final_den}}`;
+
                 problemData = { tex: `$${problemTex}$`, ansTex: `$${answerTex}$` };
                 isValidProblem = true;
             }

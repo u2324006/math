@@ -11,9 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    const typeEl = form.querySelector('#problem-type');
+
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         const mode = modeEl.value;
+        const type = typeEl ? typeEl.value : null;
         const difficulty = 'normal'; // Difficulty is hardcoded
 
         let targetUrl;
@@ -31,6 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
             targetUrl = `simultaneous_equations_quiz.html?mode=${mode}&difficulty=${difficulty}`;
         } else if (window.location.pathname.includes('square_roots')) {
             targetUrl = `square_roots_quiz.html?mode=${mode}&difficulty=${difficulty}`;
+        } else if (window.location.pathname.includes('linear_inequalities')) {
+            targetUrl = `linear_inequalities_quiz.html?mode=${mode}&difficulty=${difficulty}`;
+            if (type) {
+                targetUrl += `&type=${type}`;
+            }
         } else {
             // Default to linear
             targetUrl = `linear_quiz.html?mode=${mode}&difficulty=${difficulty}`;

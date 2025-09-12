@@ -7,13 +7,10 @@
   <link rel="stylesheet" href="../styles.css" />
   <!-- KaTeX -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALuhoK0o4+/RRE05" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
 </head>
 <style>
-  #difficulty-row, #count-row {
-    display: none;
-  }
   .back-button {
     margin: 20px auto;
     text-align: center;
@@ -45,20 +42,6 @@
             <option value="all_types">全ての計算タイプ</option>
             <option value="rationalization">有理化</option>
           </select>
-        </div>
-
-        <div class="row" id="difficulty-row">
-          <label for="difficulty">難易度</label>
-          <select id="difficulty" required>
-            <option value="easy">やさしい</option>
-            <option value="normal" selected>ふつう</option>
-            <option value="hard">むずかしい</option>
-          </select>
-        </div>
-
-        <div class="row" id="count-row">
-          <label for="count">問題数</label>
-          <input id="count" type="number" min="1" max="100" value="10" required />
         </div>
 
         <div class="row actions">

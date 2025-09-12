@@ -125,7 +125,7 @@ function genProblem(mode, difficulty, index) {
         }
 
         case 'heavy_diff_squares': {
-            const max_val_const = { easy: 5, normal: 9, hard: 12 }[difficulty] || 9;
+            const max_val_const = 9;
             let tex = '';
             let ansTex = '';
 

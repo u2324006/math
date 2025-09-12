@@ -1,6 +1,6 @@
 function genProblem(mode, difficulty) {
-    const max_val_const = { easy: 5, normal: 9, hard: 12 }[difficulty] || 9; // For constants
-    const max_val_coeff_x = { easy: 2, normal: 3, hard: 4 }[difficulty] || 3; // For x coefficients (a, c)
+    const max_val_const = 9; // For constants
+    const max_val_coeff_x = 3; // For x coefficients (a, c)
 
     let formula_type;
     if (mode === 'int') { // xの係数1
