@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>高次式の展開と因数分解</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+</head>
+<style>
+  .back-button {
+    margin: 20px auto;
+    text-align: center;
+  }
+  .back-button .button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  .back-button .button:hover {
+    background-color: #0056b3;
+  }
+</style>
+<body>
+  <header class="container" style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>高次式の展開と因数分解</h1>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <form id="control-form">
+        <div class="row">
+          <label for="mode">種類</label>
+          <select id="mode" required>
+            <option value="expand">展開</option>
+            <option value="factor">因数分解</option>
+          </select>
+        </div>
+
+        <div class="row actions">
+          <button type="submit" id="generate">作成</button>
+          <button type="button" id="clear">クリア</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <ol id="problems" class="problems"></ol>
+    </section>
+
+    
+  </main>
+
+  <div class="back-button">
+    <button type="button" onclick="location.href='../homepage.html'" class="button">戻る</button>
+  </div>
+
+  <footer class="container foot">
+    <small>KaTeX 使用／ローカル読み込み（<code>node_modules/katex/dist</code>）</small>
+  </footer>
+  <script src="../main_page_script.js"></script>
+</body>
+</html>

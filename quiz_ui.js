@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof problemCounts !== 'undefined') {
         problemCounts.simpleRationalization = 0;
@@ -32,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const difficulty = urlParams.get('difficulty') || 'normal';
     const type = urlParams.get('type');
 
-    const problemCount = 10; // 2x5 grid
+    const problemCount = type === 'system' ? 4 : 10;
 
     // Generate and display problems
     for (let i = 0; i < problemCount; i++) {
@@ -68,36 +69,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const equationEl = document.createElement('div');
         equationEl.className = 'equation-content';
-        console.log('Problem tex string (before katex.renderToString):', problem.tex); // Changed console.log
-        equationEl.innerHTML = katex.renderToString(problem.tex, {throwOnError: false}); // Changed to use katex.renderToString
+        equationEl.innerHTML = katex.renderToString(problem.tex, {throwOnError: false, displayMode: true});
 
         card.appendChild(numberEl);
         card.appendChild(equationEl);
         problemGrid.appendChild(card);
-
-        // Removed renderMathInElement call on equationEl
     }
-
-    const render = () => {
-        // Check if renderMathInElement is available
-        if (typeof renderMathInElement === 'function') {
-            console.log('renderMathInElement called with:', problemGrid);
-            renderMathInElement(problemGrid, {
-                delimiters: [
-                    {left: "$", right: "$", display: true},
-                    {left: "$", right: "$", display: false},
-                    {left: "\\(", right: "\\)", display: false},
-                    {left: "\\[", right: "\\]", display: true}
-                ],
-                strict: false
-            });
-        } else {
-            console.error('KaTeX rendering function (renderMathInElement) not found.');
-        }
-    }
-
-    // Initial render
-    render();
 
     // --- Event Listeners ---
 
@@ -111,31 +88,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const equationEl = card.querySelector('.equation-content');
             if (equationEl) {
                 if (showingAnswers) {
-                    console.log('ansTex for problem', index + 1, ':', generatedProblems[index].ansTex);
-                    console.log('Answer tex string (before katex.renderToString):', generatedProblems[index].ansTex); // Changed console.log
-                    equationEl.innerHTML = katex.renderToString(generatedProblems[index].ansTex, {throwOnError: false}); // Changed to use katex.renderToString
-                    renderMathInElement(equationEl, {
-                        delimiters: [
-                            {left: "$", right: "$", display: true},
-                            {left: "$", right: "$", display: false},
-                            {left: "\\(", right: "\\)", display: false},
-                            {left: "\\[", right: "\\]", display: true}
-                        ],
-                        strict: false
-                    });
+                    equationEl.innerHTML = katex.renderToString(generatedProblems[index].ansTex, {throwOnError: false});
                 } else {
-                    console.log('tex for problem', index + 1, ':', generatedProblems[index].tex);
-                    console.log('Problem tex string (before katex.renderToString):', generatedProblems[index].tex); // Changed console.log
-                    equationEl.innerHTML = katex.renderToString(generatedProblems[index].tex, {throwOnError: false}); // Changed to use katex.renderToString
-                    renderMathInElement(equationEl, {
-                        delimiters: [
-                            {left: "$", right: "$", display: true},
-                            {left: "$", right: "$", display: false},
-                            {left: "\\(", right: "\\)", display: false},
-                            {left: "\\[", right: "\\]", display: true}
-                        ],
-                        strict: false
-                    });
+                    equationEl.innerHTML = katex.renderToString(generatedProblems[index].tex, {throwOnError: false, displayMode: true});
                 }
             }
         });

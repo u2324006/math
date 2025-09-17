@@ -67,26 +67,16 @@ function randomIntInRange(difficulty = 2) {
 }
 
 function randomFrac(difficulty = 2) {
-  const d_max = {
-    1: 5,
-    2: 8,
-    3: 12
-  }[difficulty] || 8;
-  const n_max = {
-    1: 10,
-    2: 15,
-    3: 20
-  }[difficulty] || 15;
-  let d = randInt(2, d_max);
-  let n = randInt(-n_max, n_max);
-  while (n === 0) n = randInt(-n_max, n_max);
+  let d = randInt(2, 9);
+  let n = randInt(-9, 9);
+  while (n === 0) n = randInt(-9, 9);
   return simplify(n, d);
 }
 
 function randomRational(mode, difficulty) {
   if (mode === 'int') return [randomIntInRange(difficulty), 1];
   if (mode === 'frac') return randomFrac(difficulty);
-  return Math.random() < 0.5 ? [randomIntInRange(difficulty), 1] : randomFrac(difficulty);
+  return Math.random() < 0.8 ? [randomIntInRange(difficulty), 1] : randomFrac(difficulty);
 }
 
 // === Problem generation ===
@@ -288,10 +278,154 @@ function genSimultaneousInequalities(mode, difficulty) {
 }
 
 
+function genAbsoluteValueProblem(mode, difficulty) {
+    let problemTex, solutionTex;
+    while (true) {
+        const problemType = randChoice(['equation', 'inequality']);
+        const inequalitySymbol = randChoice(['<', '>', String.raw`\le`, String.raw`\ge`]);
+
+        if (problemType === 'equation') {
+            const type = randChoice(['type1', 'type2']);
+            if (type === 'type1') {
+                // |ax + b| = c
+                const a = randomRational(mode, difficulty);
+                const b = randomRational(mode, difficulty);
+                let c = randomRational(mode, difficulty);
+                if (c[0] < 0) {
+                    c[0] = -c[0];
+                }
+
+                const sol1 = div(sub(c, b), a);
+                const sol2 = div(sub(mul([-1, 1], c), b), a);
+
+                if (Math.abs(sol1[0]) > 99 || sol1[1] > 99 || Math.abs(sol2[0]) > 99 || sol2[1] > 99) {
+                    continue;
+                }
+
+                problemTex = `|${toTex(a, true)}x`;
+                if (b[0] !== 0) {
+                    problemTex += ` ${b[0] > 0 ? '+' : '-'} ${toTex([Math.abs(b[0]), b[1]])}`;
+                }
+                problemTex += `| = ${toTex(c)}`;
+
+                solutionTex = `x = ${toTex(sol1)}, ${toTex(sol2)}`;
+                break;
+
+            } else {
+                // |ax| = bx + c
+                const a = randomRational(mode, difficulty);
+                const b = randomRational(mode, difficulty);
+                const c = randomRational(mode, difficulty);
+
+                if (sub(a, b)[0] === 0 || sub(mul([-1, 1], a), b)[0] === 0) {
+                    continue;
+                }
+
+                const sol1 = div(c, sub(a, b));
+                const sol2 = div(c, sub(mul([-1, 1], a), b));
+
+                if (Math.abs(sol1[0]) > 99 || sol1[1] > 99 || Math.abs(sol2[0]) > 99 || sol2[1] > 99) {
+                    continue;
+                }
+
+                problemTex = `|${toTex(a, true)}x| = ${toTex(b, true)}x`;
+                if (c[0] !== 0) {
+                    problemTex += ` ${c[0] > 0 ? '+' : '-'} ${toTex([Math.abs(c[0]), c[1]])}`;
+                }
+
+                solutionTex = `x = ${toTex(sol1)}, ${toTex(sol2)}`;
+                break;
+            }
+        } else { // inequality
+            const type = randChoice(['type1', 'type2']);
+            if (type === 'type1') {
+                // |ax - b| < cx + d
+                const a = randomRational(mode, difficulty);
+                const b = randomRational(mode, difficulty);
+                const c = randomRational(mode, difficulty);
+                const d = randomRational(mode, difficulty);
+
+                const ac_add = add(a, c);
+                const ac_sub = sub(a, c);
+
+                if (ac_add[0] === 0 || ac_sub[0] === 0) {
+                    continue;
+                }
+
+                const sol1_num = sub(b, d);
+                const sol1 = div(sol1_num, ac_add);
+
+                const sol2_num = add(d, b);
+                const sol2 = div(sol2_num, ac_sub);
+                
+                if (Math.abs(sol1[0]) > 99 || sol1[1] > 99 || Math.abs(sol2[0]) > 99 || sol2[1] > 99) {
+                    continue;
+                }
+
+                problemTex = `|${toTex(a, true)}x ${b[0] > 0 ? '-' : '+'} ${toTex([Math.abs(b[0]), b[1]])}| ${inequalitySymbol} ${toTex(c, true)}x`;
+                if (d[0] !== 0) {
+                    problemTex += ` ${d[0] > 0 ? '+' : '-'} ${toTex([Math.abs(d[0]), d[1]])}`;
+                }
+
+                let sol_symbol1 = '<';
+                let sol_symbol2 = '<';
+
+                if (inequalitySymbol.includes('>')) {
+                    // |X| > Y  <=> X > Y or X < -Y
+                    solutionTex = `x < ${toTex(sol1)}, x > ${toTex(sol2)}`;
+                } else {
+                    // |X| < Y <=> -Y < X < Y
+                    solutionTex = `${toTex(sol1)} < x < ${toTex(sol2)}`;
+                }
+                break;
+
+            } else {
+                // |ax| > bx + c
+                const a = randomRational(mode, difficulty);
+                const b = randomRational(mode, difficulty);
+                const c = randomRational(mode, difficulty);
+
+                const ab_sub = sub(a, b);
+                const ab_add = add(a, b);
+
+                if (ab_sub[0] === 0 || ab_add[0] === 0) {
+                    continue;
+                }
+
+                const sol1 = div(c, ab_sub);
+                const sol2 = div(mul([-1,1], c), ab_add);
+
+                if (Math.abs(sol1[0]) > 99 || sol1[1] > 99 || Math.abs(sol2[0]) > 99 || sol2[1] > 99) {
+                    continue;
+                }
+
+                problemTex = `|${toTex(a, true)}x| ${inequalitySymbol} ${toTex(b, true)}x`;
+                if (c[0] !== 0) {
+                    problemTex += ` ${c[0] > 0 ? '+' : '-'} ${toTex([Math.abs(c[0]), c[1]])}`;
+                }
+
+                if (inequalitySymbol.includes('>')) {
+                    solutionTex = `x < ${toTex(sol2)}, x > ${toTex(sol1)}`;
+                } else {
+                    solutionTex = `${toTex(sol1)} < x < ${toTex(sol2)}`;
+                }
+                break;
+            }
+        }
+    }
+    return {
+        tex: problemTex,
+        ansTex: solutionTex,
+    };
+}
+
 // This will be used by quiz_ui.js
 function genProblem(mode, difficulty, i, type) {
     if (type === 'simultaneous') {
         return genSimultaneousInequalities(mode, difficulty);
+    }
+    if (type === 'absolute_value') {
+        return genAbsoluteValueProblem(mode, difficulty);
     }
     return genLinearInequalityProblem(mode, difficulty);
 }
@@ -319,6 +453,9 @@ function selfTest() {
                 
                 const p4 = genSimultaneousInequalities(mode, difficulty);
                 console.log("Simultaneous:", p4.tex, "==>", p4.ansTex);
+
+                const p5 = genAbsoluteValueProblem(mode, difficulty);
+                console.log("Absolute Value:", p5.tex, "==>", p5.ansTex);
 
 
             } catch (e) {

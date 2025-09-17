@@ -92,10 +92,10 @@ function genProblem(mode, difficulty) {
     // Format the equations into LaTeX
     const eq1 = formatEquation(a, b, c);
     const eq2 = formatEquation(d, e, f);
-    const tex = String.raw`\[\begin{cases} ${eq1} \\ ${eq2} \end{cases}\]`;
+    const tex = String.raw`\begin{cases} ${eq1} \\ ${eq2} \end{cases}`;
 
     // Format the solutions
-    const ansTex = `$x = ${toTex([sol_x_n, sol_x_d])}, y = ${toTex([sol_y_n, sol_y_d])}$`;
+    const ansTex = `x = ${toTex([sol_x_n, sol_x_d])}, y = ${toTex([sol_y_n, sol_y_d])}`;
 
     return { tex, ansTex };
 }
@@ -123,4 +123,34 @@ function formatEquation(a, b, c) {
 
     parts.push(`= ${c}`);
     return parts.join(' ');
+}
+
+// Utility functions (assuming they are missing from the previous context)
+function randInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function gcd(a, b) {
+    return b === 0 ? a : gcd(b, a % b);
+}
+
+function simplify(numerator, denominator) {
+    if (denominator === 0) {
+        return [numerator, denominator]; // Avoid division by zero
+    }
+    const commonDivisor = gcd(numerator, denominator);
+    let n = numerator / commonDivisor;
+    let d = denominator / commonDivisor;
+    if (d < 0) {
+        n = -n;
+        d = -d;
+    }
+    return [n, d];
+}
+
+function toTex([n, d]) {
+    if (d === 1) {
+        return n.toString();
+    }
+    return `\frac{${n}}{${d}}`;
 }

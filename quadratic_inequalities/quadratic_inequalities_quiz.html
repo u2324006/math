@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多項式の展開</title>
+    <link rel="stylesheet" href="../styles.css">
+    <!-- KaTeX (数式表示ライブラリ) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+    
+    <!-- クイズページ用のスタイル -->
+    <style>
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            padding: 16px;
+            max-width: 980px;
+            margin: 0 auto;
+        }
+        .problem-card {
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            gap: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(2, 6, 23, 0.08);
+        }
+        .problem-number {
+            font-size: 1.1em;
+            font-weight: bold;
+            width: 30px;
+            text-align: right;
+        }
+        .back-button {
+            margin: 16px;
+            text-align: center;
+        }
+        .header-actions button {
+            margin-left: 10px;
+        }
+
+        @media print {
+            body { margin: 0; }
+            header.container, .back-button, .header-actions { display: none; }
+            @page { size: A4 portrait; margin: 20mm; }
+            .problem-grid { width: 100%; height: 100%; max-width: none; padding: 0; margin: 0; grid-template-rows: repeat(5, 1fr); }
+            .problem-card { box-shadow: none; border: none; font-size: 1.1em; padding: 0 0 37mm 0; }
+        }
+    </style>
+</head>
+<body>
+    <header class="container" style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>式の計算</h1>
+        <div class="header-actions">
+            <button id="toggle-answers-button">解答</button>
+            <button id="print-button">印刷</button>
+        </div>
+    </header>
+
+    <div id="problem-grid" class="problem-grid">
+        <!-- ここに問題がJavaScriptによって挿入されます -->
+    </div>
+
+    <div class="back-button">
+        <a href="quadratic_inequalities.html" class="button">戻る</a> <!-- 必要に応じてリンク先を修正してください -->
+    </div>
+
+    <!-- 
+      ↓↓↓ スクリプトの読み込み順が非常に重要です ↓↓↓
+      1. math_utils.js (計算の基本ツール)
+      2. problem_generator.js (genProblem関数を定義)
+      3. quiz_ui.js (genProblem関数を利用)
+    -->
+    <script src="../math_utils.js"></script>
+    <script src="problem_generator.js"></script>
+    <script src="../quiz_ui.js"></script>
+</body>
+</html>

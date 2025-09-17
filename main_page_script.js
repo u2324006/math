@@ -34,11 +34,20 @@ document.addEventListener('DOMContentLoaded', () => {
             targetUrl = `simultaneous_equations_quiz.html?mode=${mode}&difficulty=${difficulty}`;
         } else if (window.location.pathname.includes('square_roots')) {
             targetUrl = `square_roots_quiz.html?mode=${mode}&difficulty=${difficulty}`;
+        } else if (window.location.pathname.includes('double_radical')) {
+            targetUrl = `double_radical_quiz.html?mode=${mode}&difficulty=${difficulty}`;
+        } else if (window.location.pathname.includes('quadratic_inequalities')) {
+            targetUrl = `quadratic_inequalities_quiz.html?difficulty=${difficulty}`;
+            if (type) {
+                targetUrl += `&type=${type}`;
+            }
         } else if (window.location.pathname.includes('linear_inequalities')) {
             targetUrl = `linear_inequalities_quiz.html?mode=${mode}&difficulty=${difficulty}`;
             if (type) {
                 targetUrl += `&type=${type}`;
             }
+        } else if (window.location.pathname.includes('higher_order_expressions')) {
+            targetUrl = `higher_order_expressions_quiz.html?mode=${mode}&difficulty=${difficulty}`;
         } else {
             // Default to linear
             targetUrl = `linear_quiz.html?mode=${mode}&difficulty=${difficulty}`;
