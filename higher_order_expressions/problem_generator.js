@@ -80,55 +80,55 @@ function genProblem(mode, difficulty) {
     if (mode === 'expand') {
         switch (problemType) {
             case 1: // (ax+b)^3
-                tex = `$(${formatFirstTerm(a, 'x')}${formatConst(b)})^3$`
-                ansTex = `$${formatFirstTerm(a*a*a, 'x^3')}${formatTerm(3*a*a*b, 'x^2')}${formatTerm(3*a*b*b, 'x')}${formatConst(b*b*b)}$`;
+                tex = `(${formatFirstTerm(a, 'x')}${formatConst(b)})^3`
+                ansTex = `${formatFirstTerm(a*a*a, 'x^3')}${formatTerm(3*a*a*b, 'x^2')}${formatTerm(3*a*b*b, 'x')}${formatConst(b*b*b)}`;
                 break;
             case 2: // (ax-b)^3
                 // Ensure b is positive for the problem display, but use its value for calculation
                 b_pos = Math.abs(b);
-                tex = `$(${formatFirstTerm(a, 'x')}${formatConst(-b_pos)})^3$`
-                ansTex = `$${formatFirstTerm(a*a*a, 'x^3')}${formatTerm(-3*a*a*b_pos, 'x^2')}${formatTerm(3*a*b_pos*b_pos, 'x')}${formatConst(-b_pos*b_pos*b_pos)}$`;
+                tex = `(${formatFirstTerm(a, 'x')}${formatConst(-b_pos)})^3`
+                ansTex = `${formatFirstTerm(a*a*a, 'x^3')}${formatTerm(-3*a*a*b_pos, 'x^2')}${formatTerm(3*a*b_pos*b_pos, 'x')}${formatConst(-b_pos*b_pos*b_pos)}`;
                 break;
             case 3: // (ax+b)((ax)^2-abx+b^2) = (ax)^3+b^3
-                tex = `$(${formatFirstTerm(a, 'x')}${formatConst(b)})(${formatFirstTerm(a*a, 'x^2')}${formatTerm(-a*b, 'x')}${formatConst(b*b)})$`;
-                ansTex = `$${formatFirstTerm(a*a*a, 'x^3')}${formatConst(b*b*b)}$`;
+                tex = `(${formatFirstTerm(a, 'x')}${formatConst(b)})(${formatFirstTerm(a*a, 'x^2')}${formatTerm(-a*b, 'x')}${formatConst(b*b)})`;
+                ansTex = `${formatFirstTerm(a*a*a, 'x^3')}${formatConst(b*b*b)}`;
                 break;
             case 4: // (ax-b)((ax)^2+abx+b^2) = (ax)^3-b^3
                 // Ensure b is positive for the problem display
                 b_pos = Math.abs(b);
-                tex = `$(${formatFirstTerm(a, 'x')}${formatConst(-b_pos)})(${formatFirstTerm(a*a, 'x^2')}${formatTerm(a*b_pos, 'x')}${formatConst(b_pos*b_pos)})$`;
-                ansTex = `$${formatFirstTerm(a*a*a, 'x^3')}${formatConst(-b_pos*b_pos*b_pos)}$`;
+                tex = `(${formatFirstTerm(a, 'x')}${formatConst(-b_pos)})(${formatFirstTerm(a*a, 'x^2')}${formatTerm(a*b_pos, 'x')}${formatConst(b_pos*b_pos)})`;
+                ansTex = `${formatFirstTerm(a*a*a, 'x^3')}${formatConst(-b_pos*b_pos*b_pos)}`;
                 break;
             case 5: // (ax+by)^3
-                tex = `$(${formatFirstTerm(a, 'x')}${formatTerm(b, 'y')})^3$`
-                ansTex = `$${formatFirstTerm(a*a*a, 'x^3')}${formatTerm(3*a*a*b, 'x^2y')}${formatTerm(3*a*b*b, 'xy^2')}${formatTerm(b*b*b, 'y^3')}$`;
+                tex = `(${formatFirstTerm(a, 'x')}${formatTerm(b, 'y')})^3`
+                ansTex = `${formatFirstTerm(a*a*a, 'x^3')}${formatTerm(3*a*a*b, 'x^2y')}${formatTerm(3*a*b*b, 'xy^2')}${formatTerm(b*b*b, 'y^3')}`;
                 break;
         }
     } else if (mode === 'factor') {
         switch (problemType) {
             case 1: // x^3+a^3
-                tex = `$x^3${formatConst(a*a*a)}$`;
-                ansTex = `$(x${formatConst(a)})(x^2${formatTerm(-a, 'x')}${formatConst(a*a)})$`;
+                tex = `x^3${formatConst(a*a*a)}`;
+                ansTex = `(x${formatConst(a)})(x^2${formatTerm(-a, 'x')}${formatConst(a*a)})`;
                 break;
             case 2: // x^3-a^3
                 // Ensure a is positive for the problem display
                 a_pos = Math.abs(a);
-                tex = `$x^3${formatConst(-a_pos*a_pos*a_pos)}$`;
-                ansTex = `$(x${formatConst(-a_pos)})(x^2${formatTerm(a_pos, 'x')}${formatConst(a_pos*a_pos)})$`;
+                tex = `x^3${formatConst(-a_pos*a_pos*a_pos)}`;
+                ansTex = `(x${formatConst(-a_pos)})(x^2${formatTerm(a_pos, 'x')}${formatConst(a_pos*a_pos)})`;
                 break;
             case 3: // x^3+3ax^2+3a^2x+a^3 = (x+a)^3
-                tex = `$x^3${formatTerm(3*a, 'x^2')}${formatTerm(3*a*a, 'x')}${formatConst(a*a*a)}$`;
-                ansTex = `$(x${formatConst(a)})^3$`;
+                tex = `x^3${formatTerm(3*a, 'x^2')}${formatTerm(3*a*a, 'x')}${formatConst(a*a*a)}`;
+                ansTex = `(x${formatConst(a)})^3`;
                 break;
             case 4: // x^3-3ax^2+3a^2x-a^3 = (x-a)^3
                 // Ensure a is positive for the problem display
                 a_pos = Math.abs(a);
-                tex = `$x^3${formatTerm(-3*a_pos, 'x^2')}${formatTerm(3*a_pos*a_pos, 'x')}${formatConst(-a_pos*a_pos*a_pos)}$`;
-                ansTex = `$(x${formatConst(-a_pos)})^3$`;
+                tex = `x^3${formatTerm(-3*a_pos, 'x^2')}${formatTerm(3*a_pos*a_pos, 'x')}${formatConst(-a_pos*a_pos*a_pos)}`;
+                ansTex = `(x${formatConst(-a_pos)})^3`;
                 break;
             case 5: // a^3x^3+b^3y^3 = (ax+by)(a^2x^2-abxy+b^2y^2)
-                tex = `$${formatFirstTerm(a*a*a, 'x^3')}${formatTerm(b*b*b, 'y^3')}$`;
-                ansTex = `$(${formatFirstTerm(a, 'x')}${formatTerm(b, 'y')})(${formatFirstTerm(a*a, 'x^2')}${formatTerm(-a*b, 'xy')}${formatTerm(b*b, 'y^2')})$`;
+                tex = `${formatFirstTerm(a*a*a, 'x^3')}${formatTerm(b*b*b, 'y^3')}`;
+                ansTex = `(${formatFirstTerm(a, 'x')}${formatTerm(b, 'y')})(${formatFirstTerm(a*a, 'x^2')}${formatTerm(-a*b, 'xy')}${formatTerm(b*b, 'y^2')})`;
                 break;
         }
     }

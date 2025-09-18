@@ -33,8 +33,8 @@ function genIntegerProblem(difficulty) {
         Math.abs(x_sol[1]) > 20    // Solution denominator limit
     );
 
-    const problem_tex = `$${equationToTex_linear({ a, b, c, d })}$`;
-    const ansTex = `\\(x = ${toTex(x_sol)}\\\)`;
+    const problem_tex = equationToTex_linear({ a, b, c, d });
+    const ansTex = `x = ${toTex(x_sol)}`;
 
     return { tex: problem_tex, ansTex: ansTex };
 }
@@ -82,8 +82,8 @@ function genFractionProblem(difficulty) {
         Math.abs(x_sol[1]) > 30    // Solution denominator limit
     );
 
-    const problem_tex = `$${equationToTex_linear({ a, b, c, d })}$`;
-    const ansTex = `\\(x = ${toTex(x_sol)}\\\)`;
+    const problem_tex = equationToTex_linear({ a, b, c, d });
+    const ansTex = `x = ${toTex(x_sol)}`;
 
     return { tex: problem_tex, ansTex: ansTex };
 }
@@ -138,7 +138,7 @@ function genFractionalExpressionProblem(difficulty) {
 
         const numerator1_tex = formatNumerator(a_num, b_num);
         const numerator2_tex = formatNumerator(c_num, e_num);
-        problem_tex = `$ \\frac{${numerator1_tex}}{${d1_denom}} ${op_char} \\frac{${numerator2_tex}}{${d2_denom}} = ${toTex(R_rat)} $`;
+        problem_tex = `\frac{${numerator1_tex}}{${d1_denom}} ${op_char} \frac{${numerator2_tex}}{${d2_denom}} = ${toTex(R_rat)}`;
 
         const A = a_num * d2_denom + op_val * c_num * d1_denom;
         if (A === 0) continue;
@@ -153,7 +153,7 @@ function genFractionalExpressionProblem(difficulty) {
 
     } while (Math.abs(xsol_rat[0]) > 40 || Math.abs(xsol_rat[1]) > 40);
 
-    ansTex = `\\(x = ${toTex(xsol_rat)}\\\)`;
+    ansTex = `x = ${toTex(xsol_rat)}`;
 
     return { tex: problem_tex, ansTex: ansTex };
 }

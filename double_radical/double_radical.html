@@ -36,19 +36,18 @@
   <main class="container">
     <section class="panel">
       <form id="control-form">
-        <div class="row">
-          <label for="mode">種類</label>
-          <select id="mode" required>
-            <option value="easy">簡単な問題</option>
-            <option value="hard">難しい問題</option>
-          </select>
-        </div>
-
-        <div class="row actions">
-          <button type="submit" id="generate">作成</button>
-          <button type="button" id="clear">クリア</button>
-        </div>
-      </form>
+            <div class="form-group">
+                <label for="mode">問題のタイプを選択してください:</label>
+                <select id="mode" name="mode">
+                    <option value="easy">基本</option>
+                    <option value="normal" selected>標準</option>
+                    <option value="hard">応用</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit">問題を作成</button>
+            </div>
+        </form>
     </section>
 
     <section class="panel">

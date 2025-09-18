@@ -81,10 +81,10 @@ function genProblem(mode, difficulty) {
 
         if (final_a_coeff === final_c_coeff && final_b_const === final_d_const) {
             // If factors are identical, display as (Ax+B)^2
-            tex = `$${factor1_tex_raw}^{2}$`;
+            tex = `${factor1_tex_raw}^{2}`;
         } else {
             // Otherwise, display as (Ax+B)(Cx+D)
-            tex = `$${factor1_tex_raw}${factor2_tex_raw}$`;
+            tex = `${factor1_tex_raw}${factor2_tex_raw}`;
         }
 
         // Expand: (ac)x^2 + (ad+bc)x + (bd)
@@ -94,24 +94,28 @@ function genProblem(mode, difficulty) {
 
         let parts = [];
         if (x2_coeff !== 0) {
-            parts.push(`${x2_coeff}x^{2}`);
+            if (x2_coeff === 1) {
+                parts.push('x^{2}');
+            } else if (x2_coeff === -1) {
+                parts.push('-x^{2}');
+            } else {
+                parts.push(`${x2_coeff}x^{2}`);
+            }
         }
         if (x_coeff !== 0) {
-            const sign = x_coeff > 0 ? '+' : '-';
+            const sign = x_coeff > 0 ? ' + ' : ' - ';
             const val = Math.abs(x_coeff);
-            parts.push(sign);
-            if (val !== 1) {
-                parts.push(val);
-            }
+            if (parts.length > 0) parts.push(sign);
+            if (val !== 1 || x_coeff < 0) parts.push(val);
             parts.push('x');
         }
         if (const_term !== 0) {
-            const sign = const_term > 0 ? '+' : '-';
+            const sign = const_term > 0 ? ' + ' : ' - ';
             const val = Math.abs(const_term);
-            parts.push(sign);
+            if (parts.length > 0) parts.push(sign);
             parts.push(val);
         }
-        ansTex = `$${parts.join(' ').replace(/ \+ /g, ' + ').replace(/ \- /g, ' - ')}$`;
+        ansTex = parts.join('').trim();
 
     } else { // Existing cases 1-4 (x coefficient is 1)
         a = randInt(1, max_val_const);
@@ -124,28 +128,28 @@ function genProblem(mode, difficulty) {
         switch (formula_type) {
             case 1: // (x + a)^2
                 const term1_case1 = final_a >= 0 ? `+ ${final_a}` : `${final_a}`;
-                tex = `$(x ${term1_case1})^{2}$`;
-                ansTex = `$x^{2} + ${2 * final_a}x + ${final_a * final_a}$`;
+                tex = `(x ${term1_case1})^{2}`;
+                ansTex = `x^{2} ${final_a*2 >= 0 ? '+' : '-'} ${Math.abs(final_a*2)}x + ${final_a * final_a}`;
                 break;
             
             case 2: // (x - a)^2
                 const term1_case2 = final_a >= 0 ? `- ${final_a}` : `+ ${Math.abs(final_a)}`;
-                tex = `$(x ${term1_case2})^{2}$`;
-                ansTex = `$x^{2} - ${2 * final_a}x + ${final_a * final_a}$`;
+                tex = `(x ${term1_case2})^{2}`;
+                ansTex = `x^{2} ${-2*final_a >= 0 ? '+' : '-'} ${Math.abs(-2*final_a)}x + ${final_a * final_a}`;
                 break;
 
             case 3: // (x + a)(x - a)
                 const term1_case3_plus = final_a >= 0 ? `+ ${final_a}` : `${final_a}`;
                 const term1_case3_minus = final_a >= 0 ? `- ${final_a}` : `+ ${Math.abs(final_a)}`;
-                tex = `$(x ${term1_case3_plus})(x ${term1_case3_minus})$`;
-                ansTex = `$x^{2} - ${final_a * final_a}$`;
+                tex = `(x ${term1_case3_plus})(x ${term1_case3_minus})`;
+                ansTex = `x^{2} - ${final_a * final_a}`;
                 break;
 
             case 4: // (x + a)(x + b)
             default:
                 const term1_case4 = final_a >= 0 ? `+ ${final_a}` : `${final_a}`;
                 const term2_case4 = final_b >= 0 ? `+ ${final_b}` : `${final_b}`;
-                tex = `$(x ${term1_case4})(x ${term2_case4})$`;
+                tex = `(x ${term1_case4})(x ${term2_case4})`;
                 
                 const sum_ab = final_a + final_b;
                 const prod_ab = final_a * final_b;
@@ -166,7 +170,7 @@ function genProblem(mode, difficulty) {
                     parts.push(sign);
                     parts.push(val);
                 }
-                ansTex = `$${parts.join(' ').replace(/ \+ /g, ' + ').replace(/ \- /g, ' - ')}$`;
+                ansTex = `${parts.join(' ').replace(/ \+ /g, ' + ').replace(/ \- /g, ' - ')}`;
                 break;
         }
     }

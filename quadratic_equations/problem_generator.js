@@ -99,7 +99,7 @@ function genProblem(mode, difficulty, index) {
             } while (D <= 0 || qf_isPerfectSquare(D));
 
             const eq = { a: [a, 1], b: [b, 1], c: [c, 1] };
-            const tex = `\$${equationToTex_quadratic(eq)}\$`;
+            const tex = equationToTex_quadratic(eq);
 
             const [k, m] = qf_simplifySqrt(D);
 
@@ -120,7 +120,7 @@ function genProblem(mode, difficulty, index) {
                 ansTex_str = `x = \\frac{${b_s} \\pm ${sqrt_part}}{${den_s}}`;
             }
             
-            const ansTex = `\$${ansTex_str}\$`;
+            const ansTex = ansTex_str;
             return { tex, ansTex };
         }
 
@@ -150,8 +150,8 @@ function genProblem(mode, difficulty, index) {
                 let problem_tex = parts.join('').trim();
                 if (problem_tex.startsWith('+')) problem_tex = problem_tex.substring(1).trim();
                 
-                tex = `\$${problem_tex} = 0\$`;
-                ansTex = `\$x = ${-final_a}\$ (重解)`;
+                tex = `${problem_tex} = 0`;
+                ansTex = `x = ${-final_a} (重解)`;
 
             } else { // Difference of Squares
                 if (index === 3 || index === 7) { // (bx)^2 - a^2 = 0
@@ -166,10 +166,10 @@ function genProblem(mode, difficulty, index) {
                     const x2_coeff = b * b;
                     const const_term = a * a;
             
-                    tex = `\$${x2_coeff}x^2 - ${const_term} = 0\$`;
+                    tex = `${x2_coeff}x^2 - ${const_term} = 0`;
             
                     const root_frac = [a, b];
-                    ansTex = `\$x = \\pm ${toTex(root_frac)}\$`;
+                    ansTex = `x = \\pm ${toTex(root_frac)}`;
 
                 } else { // x^2 - a^2 = 0
                     let a = randInt(1, max_val_const);
@@ -177,13 +177,13 @@ function genProblem(mode, difficulty, index) {
     
                     const const_term = a * a;
     
-                    tex = `\$x^2 - ${const_term} = 0\$`;
+                    tex = `x^2 - ${const_term} = 0`;
     
                     let root1 = a;
                     let root2 = -a;
                     if (root1 > root2) [root1, root2] = [root2, root1];
     
-                    ansTex = `\$x = ${root1}, ${root2}\$`;
+                    ansTex = `x = ${root1}, ${root2}`;
                 }
             }
             return { tex, ansTex };
@@ -218,7 +218,7 @@ function genProblem(mode, difficulty, index) {
             eq.c = simplify(eq.c[0], eq.c[1]);
 
             const tex_str = equationToTex_quadratic(eq);
-            const tex = `\$${tex_str}\$`;
+            const tex = tex_str;
             
             let ansTex = '';
             let ansTex_str = '';
@@ -231,7 +231,7 @@ function genProblem(mode, difficulty, index) {
                 const root2_str = toTex(x1_val < x2_val ? x2 : x1);
                 ansTex_str = `x = ${root1_str}, ${root2_str}`;
             }
-            ansTex = `\$${ansTex_str}\$`;
+            ansTex = ansTex_str;
 
             return { tex, ansTex };
         }

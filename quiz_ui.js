@@ -6,9 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
         problemCounts.polynomialRationalizationNegativeNumerator = 0;
     }
 
-    // Check if genProblem function is available
-    if (typeof genProblem !== 'function') {
-        console.error('Error: genProblem() function not found. Make sure a problem generator script is loaded before quiz_ui.js.');
+    // Check if a problem generator function is available
+    if (typeof genProblem !== 'function' && typeof genFractionalEquationProblem !== 'function') {
+        console.error('Error: No problem generator function (genProblem or genFractionalEquationProblem) found. Make sure a problem generator script is loaded before quiz_ui.js.');
         const grid = document.getElementById('problem-grid');
         if(grid) grid.innerHTML = '<p style="color: red;">エラー: 問題を生成できませんでした。スクリプトの読み込み順序を確認してください。</p>';
         return;
@@ -69,7 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const equationEl = document.createElement('div');
         equationEl.className = 'equation-content';
-        equationEl.innerHTML = katex.renderToString(problem.tex, {throwOnError: false, displayMode: true});
+        // Replacing renderToString with render for better error handling and direct DOM manipulation
+        try {
+            katex.render(problem.tex, equationEl, {throwOnError: true, displayMode: true});
+        } catch (e) {
+            console.error("Error rendering KaTeX:", e);
+            equationEl.textContent = problem.tex; // Fallback to showing the TeX string
+        }
 
         card.appendChild(numberEl);
         card.appendChild(equationEl);
@@ -87,10 +93,13 @@ document.addEventListener('DOMContentLoaded', () => {
         cards.forEach((card, index) => {
             const equationEl = card.querySelector('.equation-content');
             if (equationEl) {
-                if (showingAnswers) {
-                    equationEl.innerHTML = katex.renderToString(generatedProblems[index].ansTex, {throwOnError: false});
-                } else {
-                    equationEl.innerHTML = katex.renderToString(generatedProblems[index].tex, {throwOnError: false, displayMode: true});
+                const texString = showingAnswers ? generatedProblems[index].ansTex : generatedProblems[index].tex;
+                try {
+                    // Use displayMode for both for consistent layout
+                    katex.render(texString, equationEl, {throwOnError: true, displayMode: true});
+                } catch (e) {
+                    console.error("Error rendering KaTeX:", e);
+                    equationEl.textContent = texString; // Fallback
                 }
             }
         });

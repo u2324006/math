@@ -101,5 +101,5 @@ function genFractionalEquationProblem(mode, difficulty) { // mode is used for di
         ansTex = `\\frac{${final_numerator_tex}}{${D_final}}`;
     }
 
-    return { tex: `$${tex}$`, ansTex: `$${ansTex}$` };
+    return { tex: tex, ansTex: ansTex };
 }

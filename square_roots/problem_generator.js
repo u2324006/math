@@ -163,7 +163,7 @@ function generateSumDiffProblem(difficulty, numTerms = 2, _attempt = 0) {
         const [sc1, sr1] = simplifySqrt(r1);
         const [sc2, sr2] = simplifySqrt(r2);
         const answerTex = `${formatSqrt(c1 * sc1, sr1)} + ${formatSqrt(c2 * sc2, sr2)}`;
-        return { tex: `$${problemTex}$`, ansTex: `$${answerTex}$` };
+        return { tex: problemTex, ansTex: answerTex };
     }
 
     const terms = [];
@@ -259,7 +259,7 @@ function generateSumDiffProblem(difficulty, numTerms = 2, _attempt = 0) {
         }
     }
 
-    return { tex: `$${problemTex}$`, ansTex: `$${answerTex}$` };
+    return { tex: problemTex, ansTex: answerTex };
 }
 
 function generateProductProblem(difficulty) {
@@ -280,7 +280,7 @@ function generateProductProblem(difficulty) {
             const product_radicand = r1 * r2;
             const [ans_coeff, ans_radicand] = simplifySqrt(product_radicand);
             const answerTex = formatSqrt(product_coeff * ans_coeff, ans_radicand);
-            problemData = { tex: `$${problemTex}$`, ansTex: `$${answerTex}$` };
+            problemData = { tex: problemTex, ansTex: answerTex };
             break;
         }
 
@@ -302,7 +302,7 @@ function generateProductProblem(difficulty) {
         if (Math.abs(final_ans_coeff) <= 30 && Math.abs(final_ans_radicand) <= 30) {
             isValidAnswer = true;
         }
-        problemData = { tex: `$${problemTex}$`, ansTex: `$${answerTex}$` };
+        problemData = { tex: problemTex, ansTex: answerTex };
 
     } while (!isValidAnswer);
 
@@ -327,7 +327,7 @@ function generateQuotientProblem(difficulty) {
             const quotient_radicand = r1 / r2;
             const [ans_coeff, ans_radicand] = simplifySqrt(quotient_radicand);
             const answerTex = formatSqrt(quotient_coeff * ans_coeff, ans_radicand);
-            problemData = { tex: `$${problemTex}$`, ansTex: `$${answerTex}$` };
+            problemData = { tex: problemTex, ansTex: answerTex };
             break;
         }
 
@@ -375,7 +375,7 @@ function generateQuotientProblem(difficulty) {
         if (Math.abs(ans_coeff) <= 30 && Math.abs(ans_radicand) <= 30) {
             isValidProblem = true;
         }
-        problemData = { tex: `$${problemTex}$`, ansTex: `$${answerTex}$` };
+        problemData = { tex: problemTex, ansTex: answerTex };
 
     } while (!isValidProblem);
 
@@ -401,7 +401,7 @@ function generateRationalizationProblem(difficulty) {
             const d = 2;
             const problemTex = `\\frac{${a}}{\\sqrt{${d}}}`;
             const answerTex = `\\frac{${a}\\sqrt{${d}}}{${d}}`;
-            problemData = { tex: `$${problemTex}$`, ansTex: `$${answerTex}$` };
+            problemData = { tex: problemTex, ansTex: answerTex };
             break;
         }
 
@@ -447,7 +447,7 @@ function generateRationalizationProblem(difficulty) {
 
                 const answerTex = final_den === 1 ? final_num : `\\frac{${final_num}}{${final_den}}`;
 
-                problemData = { tex: `$${problemTex}$`, ansTex: `$${answerTex}$` };
+                problemData = { tex: problemTex, ansTex: answerTex };
                 isValidProblem = true;
 
             } else {
@@ -470,7 +470,7 @@ function generateRationalizationProblem(difficulty) {
 
                 const answerTex = final_den === 1 ? final_num : `\\frac{${final_num}}{${final_den}}`;
 
-                problemData = { tex: `$${problemTex}$`, ansTex: `$${answerTex}$` };
+                problemData = { tex: problemTex, ansTex: answerTex };
                 isValidProblem = true;
             }
 
@@ -518,7 +518,7 @@ function generateRationalizationProblem(difficulty) {
                 
                 const answerTex = final_den === 1 ? final_num_str : `\\frac{${final_num_str}}{${final_den}}`;
 
-                problemData = { tex: `$${problemTex}$`, ansTex: `$${answerTex}$` };
+                problemData = { tex: problemTex, ansTex: answerTex };
                 isValidProblem = true;
 
             } else {
@@ -559,7 +559,7 @@ function generateRationalizationProblem(difficulty) {
 
                 const answerTex = final_den === 1 ? final_num_str : `\\frac{${final_num_str}}{${final_den}}`;
 
-                problemData = { tex: `$${problemTex}$`, ansTex: `$${answerTex}$` };
+                problemData = { tex: problemTex, ansTex: answerTex };
                 isValidProblem = true;
             }
         }

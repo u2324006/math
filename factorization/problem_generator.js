@@ -128,10 +128,10 @@ function genProblem(mode, difficulty, index) {
 
         if (isPerfectSquare) {
             // If factors are identical, display as (Ax+B)^2
-            ansTex = `$${factor1_tex_raw}^{2}$`;
+            ansTex = `${factor1_tex_raw}^{2}`;
         } else {
             // Otherwise, display as (Ax+B)(Cx+D)
-            ansTex = `$${factor1_tex_raw}${factor2_tex_raw}$`;
+            ansTex = `${factor1_tex_raw}${factor2_tex_raw}`;
         }
 
         // Expand: (ac)x^2 + (ad+bc)x + (bd)
@@ -150,21 +150,21 @@ function genProblem(mode, difficulty, index) {
             }
         }
         if (x_coeff !== 0) {
-            const sign = x_coeff > 0 ? '+' : '-';
+            const sign = x_coeff > 0 ? ' + ' : ' - ';
             const val = Math.abs(x_coeff);
-            parts.push(sign);
-            if (val !== 1) {
+            if (parts.length > 0) parts.push(sign);
+            if (val !== 1 || (x_coeff < 0 && parts.length === 1)) {
                 parts.push(val);
             }
             parts.push('x');
         }
         if (const_term !== 0) {
-            const sign = const_term > 0 ? '+' : '-';
+            const sign = const_term > 0 ? ' + ' : ' - ';
             const val = Math.abs(const_term);
-            parts.push(sign);
+            if (parts.length > 0) parts.push(sign);
             parts.push(val);
         }
-        tex = `$${parts.join(' ').replace(/^\+ /g, '').replace(/ \+ /g, ' + ').replace(/ \- /g, ' - ')}$`;
+        tex = parts.join('').trim();
 
     } else { // Existing cases 1-4 (x coefficient is 1)
         a = randInt(1, max_val_const);
@@ -177,35 +177,35 @@ function genProblem(mode, difficulty, index) {
         switch (formula_type) {
             case 1: // x^2 + 2ax + a^2 = (x+a)^2
                 const term1_case1 = final_a >= 0 ? `+ ${final_a}` : `${final_a}`;
-                ansTex = `$(x ${term1_case1})^{2}$`;
-                tex = `$x^{2} ${2*final_a >= 0 ? '+': ''}${2 * final_a}x ${final_a*final_a >= 0 ? '+': ''}${final_a * final_a}$`;
+                ansTex = `(x ${term1_case1})^{2}`;
+                tex = `x^{2} ${2*final_a >= 0 ? '+': ''}${2 * final_a}x ${final_a*final_a >= 0 ? '+': ''}${final_a * final_a}`;
                 break;
             
             case 2: // x^2 - 2ax + a^2 = (x-a)^2
                 const term1_case2 = final_a >= 0 ? `- ${final_a}` : `+ ${Math.abs(final_a)}`;
-                ansTex = `$(x ${term1_case2})^{2}$`;
-                tex = `$x^{2} ${-2*final_a >= 0 ? '+': ''}${-2 * final_a}x ${final_a*final_a >= 0 ? '+': ''}${final_a * final_a}$`;
+                ansTex = `(x ${term1_case2})^{2}`;
+                tex = `x^{2} ${-2*final_a >= 0 ? '+': ''}${-2 * final_a}x ${final_a*final_a >= 0 ? '+': ''}${final_a * final_a}`;
                 break;
 
             case 3: // x^2 - a^2 = (x+a)(x-a)
                 const term1_case3_plus = final_a >= 0 ? `+ ${final_a}` : `${final_a}`;
                 const term1_case3_minus = final_a >= 0 ? `- ${final_a}` : `+ ${Math.abs(final_a)}`;
-                ansTex = `$(x ${term1_case3_plus})(x ${term1_case3_minus})$`;
-                tex = `$x^{2} - ${final_a * final_a}$`;
+                ansTex = `(x ${term1_case3_plus})(x ${term1_case3_minus})`;
+                tex = `x^{2} - ${final_a * final_a}`;
                 break;
 
             case 4: // x^2 + (a+b)x + ab = (x+a)(x+b)
             default:
                 const term1_case4 = final_a >= 0 ? `+ ${final_a}` : `${final_a}`;
                 const term2_case4 = final_b >= 0 ? `+ ${final_b}` : `${final_b}`;
-                ansTex = `$(x ${term1_case4})(x ${term2_case4})$`;
+                ansTex = `(x ${term1_case4})(x ${term2_case4})`;
                 
                 const sum_ab = final_a + final_b;
                 const prod_ab = final_a * final_b;
 
                 let parts = ['x^{2}'];
                 if (sum_ab !== 0) {
-                    const sign = sum_ab > 0 ? '+' : '-';
+                    const sign = sum_ab > 0 ? ' + ' : ' - ';
                     const val = Math.abs(sum_ab);
                     parts.push(sign);
                     if (val !== 1) {
@@ -214,12 +214,12 @@ function genProblem(mode, difficulty, index) {
                     parts.push('x');
                 }
                 if (prod_ab !== 0) {
-                    const sign = prod_ab > 0 ? '+' : '-';
+                    const sign = prod_ab > 0 ? ' + ' : ' - ';
                     const val = Math.abs(prod_ab);
                     parts.push(sign);
                     parts.push(val);
                 }
-                tex = `$${parts.join(' ').replace(/^\+ /g, '').replace(/ \+ /g, ' + ').replace(/ \- /g, ' - ')}$`;
+                tex = parts.join('').trim();
                 break;
         }
     }
