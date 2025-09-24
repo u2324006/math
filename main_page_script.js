@@ -50,6 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
             targetUrl = `higher_order_expressions_quiz.html?mode=${mode}&difficulty=${difficulty}`;
         } else if (window.location.pathname.includes('complex_number_expansion')) {
             targetUrl = `complex_expansion_quiz.html?mode=${mode}&difficulty=${difficulty}`;
+        } else if (window.location.pathname.includes('exponential_logarithm')) {
+            targetUrl = `exponential_logarithm_quiz.html?mode=${mode}&difficulty=${difficulty}`;
         } else {
             // Default to linear
             targetUrl = `linear_quiz.html?mode=${mode}&difficulty=${difficulty}`;

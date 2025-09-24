@@ -16,8 +16,8 @@ function div([a,b], [c,d]) { return simplify(a*d, b*c); }
 
 function toTex([n, d]) {
     if (d === 1) return String(n);
-    if (n < 0) return String.raw`-\frac{${-n}}{${d}}`;
-    return String.raw`\frac{${n}}{${d}}`;
+    if (n < 0) return `-\\frac{${-n}}{${d}}`;
+    return `\\frac{${n}}{${d}}`;
 }
 
 // === Random helpers ===
