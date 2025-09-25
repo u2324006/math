@@ -138,7 +138,7 @@ function genFractionalExpressionProblem(difficulty) {
 
         const numerator1_tex = formatNumerator(a_num, b_num);
         const numerator2_tex = formatNumerator(c_num, e_num);
-        problem_tex = `\frac{${numerator1_tex}}{${d1_denom}} ${op_char} \frac{${numerator2_tex}}{${d2_denom}} = ${toTex(R_rat)}`;
+        problem_tex = `\\frac{${numerator1_tex}}{${d1_denom}} ${op_char} \\frac{${numerator2_tex}}{${d2_denom}} = ${toTex(R_rat)}`;
 
         const A = a_num * d2_denom + op_val * c_num * d1_denom;
         if (A === 0) continue;

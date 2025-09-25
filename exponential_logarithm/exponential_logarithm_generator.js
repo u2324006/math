@@ -1,5 +1,3 @@
-
-
 function formatLinearExpr(coeff, const_term, variable = 'x') {
     let expr = '';
     if (coeff === 1) {
@@ -513,8 +511,8 @@ function generateRationalExponentProblem() {
     const texB = formatExponent(b, y);
     const texC = formatExponent(c, z);
     
-    const op1_tex = op1_is_mul ? ' \times ' : ' \div ';
-    const op2_tex = op2_is_mul ? ' \times ' : ' \div ';
+    const op1_tex = op1_is_mul ? ' \\times ' : ' \\div ';
+    const op2_tex = op2_is_mul ? ' \\times ' : ' \\div ';
     const tex = `${texA}${op1_tex}${texB}${op2_tex}${texC}`;
     
     return { tex, ansTex };

@@ -1,59 +1,43 @@
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (typeof problemCounts !== 'undefined') {
-        problemCounts.simpleRationalization = 0;
-        problemCounts.polynomialRationalization = 0;
-        problemCounts.polynomialRationalizationNegativeNumerator = 0;
-    }
-
     // Check if a problem generator function is available
-    if (typeof genProblem !== 'function' && typeof genFractionalEquationProblem !== 'function') {
-        console.error('Error: No problem generator function (genProblem or genFractionalEquationProblem) found. Make sure a problem generator script is loaded before quiz_ui.js.');
+    if (typeof genProblem !== 'function') {
         const grid = document.getElementById('problem-grid');
-        if(grid) grid.innerHTML = '<p style="color: red;">エラー: 問題を生成できませんでした。スクリプトの読み込み順序を確認してください。</p>';
+        if (grid) {
+            grid.innerHTML = '<p style="color: red;">Error: genProblem() function not found. Make sure a problem generator script is loaded before quiz_ui.js.</p>';
+        }
+        console.error('Error: genProblem() function not found. Make sure a problem generator script is loaded before quiz_ui.js.');
         return;
     }
 
     const problemGrid = document.getElementById('problem-grid');
     const toggleBtn = document.getElementById('toggle-answers-button');
     const printBtn = document.getElementById('print-button');
-    
-    if (!problemGrid || !toggleBtn || !printBtn) {
-        console.error('Required UI elements not found on the page.');
-        return;
-    }
 
     let showingAnswers = false;
     const generatedProblems = [];
-    const problemSet = new Set(); // To store unique problem strings (tex + ansTex)
+    const problemSet = new Set();
 
     // Get parameters from URL
     const urlParams = new URLSearchParams(window.location.search);
-    const mode = urlParams.get('mode') || 'both';
-    const difficulty = urlParams.get('difficulty') || 'normal';
+    const mode = urlParams.get('mode');
+    const difficulty = urlParams.get('difficulty');
     const type = urlParams.get('type');
 
-    const problemCount = type === 'system' ? 4 : 10;
+    const problemCount = 10;
 
     // Generate and display problems
     for (let i = 0; i < problemCount; i++) {
         let problem;
         let problemString;
         let attempts = 0;
-        const maxAttempts = 100; // Safeguard against infinite loops
-
         do {
-            if (mode === 'frac_eq' && typeof genFractionalEquationProblem === 'function') {
-                problem = genFractionalEquationProblem(mode, difficulty); // Call the specific function
-            } 
-            else {
-                problem = genProblem(mode, difficulty, i, type); // Original call with type
-            }
-            problemString = problem.tex; // Use only the problem text for uniqueness check
+            problem = genProblem(mode, difficulty, i, type);
+            problemString = problem.tex + problem.ansTex;
             attempts++;
-            if (attempts > maxAttempts) {
-                console.warn('Could not generate unique problem after ' + maxAttempts + ' attempts. Adding a duplicate.');
-                break; // Exit loop to avoid infinite loop
+            if (attempts > 100) { // Failsafe
+                console.error("Failed to generate a unique problem after 100 attempts.");
+                break;
             }
         } while (problemSet.has(problemString));
 
@@ -69,39 +53,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const equationEl = document.createElement('div');
         equationEl.className = 'equation-content';
-        // Replacing renderToString with render for better error handling and direct DOM manipulation
-        try {
-            katex.render(problem.tex, equationEl, {throwOnError: true, displayMode: true});
-        } catch (e) {
-            console.error("Error rendering KaTeX:", e);
-            equationEl.textContent = problem.tex; // Fallback to showing the TeX string
-        }
+        katex.render(problem.tex, equationEl, { throwOnError: false, displayMode: true });
 
         card.appendChild(numberEl);
         card.appendChild(equationEl);
         problemGrid.appendChild(card);
     }
 
-    // --- Event Listeners ---
-
     // Toggle between problems and answers
     toggleBtn.addEventListener('click', () => {
         showingAnswers = !showingAnswers;
         toggleBtn.textContent = showingAnswers ? '問題' : '解答';
         const cards = document.querySelectorAll('.problem-card');
-        
         cards.forEach((card, index) => {
             const equationEl = card.querySelector('.equation-content');
-            if (equationEl) {
-                const texString = showingAnswers ? generatedProblems[index].ansTex : generatedProblems[index].tex;
-                try {
-                    // Use displayMode for both for consistent layout
-                    katex.render(texString, equationEl, {throwOnError: true, displayMode: true});
-                } catch (e) {
-                    console.error("Error rendering KaTeX:", e);
-                    equationEl.textContent = texString; // Fallback
-                }
-            }
+            const tex = showingAnswers ? generatedProblems[index].ansTex : generatedProblems[index].tex;
+            katex.render(tex, equationEl, { throwOnError: false, displayMode: true });
         });
     });
 

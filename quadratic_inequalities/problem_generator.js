@@ -187,11 +187,11 @@ function generateInequalityAndStructuredSolution() {
 // --- 連立不等式 (分数対応) ---
 function genSystemOfQuadraticInequalities() {
     const problem1 = generateInequalityAndStructuredSolution();
-    const problem2 = generateIneuityAndStructuredSolution();
+        const problem2 = generateInequalityAndStructuredSolution();
 
     const finalSolution = intersectSolutions(problem1.solution, problem2.solution);
 
-    const problemTex = '\\begin{cases} ' + problem1.tex + ' \\ ' + problem2.tex + ' \\end{cases}';
+        const problemTex = String.raw`\begin{cases} ${problem1.tex} \\ ${problem2.tex} \end{cases}`;
     const ansTex = formatSolutionToTex(finalSolution);
 
     return { tex: problemTex, ansTex: ansTex };

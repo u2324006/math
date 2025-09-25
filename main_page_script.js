@@ -52,6 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
             targetUrl = `complex_expansion_quiz.html?mode=${mode}&difficulty=${difficulty}`;
         } else if (window.location.pathname.includes('exponential_logarithm')) {
             targetUrl = `exponential_logarithm_quiz.html?mode=${mode}&difficulty=${difficulty}`;
+        } else if (window.location.pathname.includes('fraction_arithmetic')) {
+            targetUrl = `fraction_arithmetic_quiz.html?mode=${mode}&difficulty=${difficulty}`;
+        } else if (window.location.pathname.includes('calculus')) {
+            targetUrl = `calculus_quiz.html?mode=${mode}&difficulty=${difficulty}`;
         } else {
             // Default to linear
             targetUrl = `linear_quiz.html?mode=${mode}&difficulty=${difficulty}`;
